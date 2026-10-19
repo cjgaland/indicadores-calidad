@@ -11,17 +11,21 @@
   // ---------- Versión y novedades ----------
   // Al publicar cambios: añadir una entrada AL PRINCIPIO de NOVEDADES, poner su versión en los ?v= de index.html, en
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
-  const APP_VERSION = "2026.02";
+  const APP_VERSION = "2026.03";
   const NOVEDADES = [
+    { version: "2026.03", fecha: "Octubre 2026", titulo: "Una app para todos", cambios: [
+      "La app es ahora de uso general: se han quitado las referencias directas al curso de auditorías (que sigue citado entre las fuentes, en «Acerca de»).",
+      "La portada se titula «Indicadores» y tiene un acceso directo a la app hermana Tamaño Muestral.",
+      "El Excel exportado nombra sus hojas «Caracterización», «Definición operativa», «Compuestos» y «Resultados»."] },
     { version: "2026.02", fecha: "Octubre 2026", titulo: "Resultados por periodo (Verificar)", cambios: [
       "Nueva pantalla «Resultados» en cada indicador: escribe un periodo por fila y verás si cumple el estándar (verde o rojo) según el sentido (≥ o ≤).",
       "Gráfico de la evolución con la línea del estándar y un resumen de la serie: en cuántos periodos se cumple, rachas en rojo y si mejora o empeora.",
       "En los indicadores LQAS se aplica la regla n/c del plan y se enlaza con «Ya tengo los resultados» de Tamaño Muestral para la frase del informe.",
       "Los resultados salen en la ficha imprimible, en el cuadro, en el Excel (hoja «Resultados») y en la copia de seguridad. Los ejemplos traen mediciones inventadas."] },
     { version: "2026.01", fecha: "Octubre 2026", titulo: "Primera versión", cambios: [
-      "Asistente en seis pasos para crear un indicador: del hallazgo del Mapa de Riesgos al indicador, caracterización (5A), definición operativa (5B), comprobación de su calidad (SMART, válido, fiable, útil), muestra y ficha.",
-      "Avisos de las trampas del curso: centinela sin muestreo, la media que maquilla, el sentido invertido del estándar, términos sin definir…",
-      "Indicador compuesto (5C) con su desglose, el peso de cada criterio y la frase «titular + desglose».",
+      "Asistente en seis pasos para crear un indicador: del hallazgo del Mapa de Riesgos al indicador, caracterización, definición operativa, comprobación de su calidad (SMART, válido, fiable, útil), muestra y ficha.",
+      "Avisos de las trampas más habituales: centinela sin muestreo, la media que maquilla, el sentido invertido del estándar, términos sin definir…",
+      "Indicador compuesto con su desglose, el peso de cada criterio y la frase «titular + desglose».",
       "Cuadro de indicadores imprimible y exportable a Excel; copia de seguridad e importación; enlace para compartir un indicador.",
       "Enlace a Tamaño Muestral con los datos ya puestos para calcular la muestra, el plan LQAS o la concordancia del pilotaje.",
       "Aprende, glosario con buscador y «Ponte a prueba»."] }
@@ -134,7 +138,7 @@
       poblacion: "Pacientes con 5 o más fármacos crónicos ingresados en el semestre", exclusiones: "Estancias de menos de 24 h. Pacientes que no pueden informar y sin cuidador ni registro previo.",
       fuentes: ["Historia clínica", "Sistema de información"], fuenteOtra: "Módulo de prescripción", sentido: "mas", estandar: "90", umbral: "", periodicidad: "Semestral", responsable: "Jefatura de servicio y farmacia hospitalaria",
       terminos: "«Conciliación documentada»: consta la lista de medicación habitual y, para cada fármaco, si se mantiene, se suspende o se cambia. «Polimedicado»: 5 o más fármacos crónicos.",
-      observaciones: "Minicaso del tema 3. Se acompaña de un indicador de resultado (eventos adversos por omisiones o duplicidades).",
+      observaciones: "Se acompaña de un indicador de resultado (eventos adversos por omisiones o duplicidades).",
       calidad: cal({}), objetivo: "estimar", muestra: { conf: "95", e: "10", p: "", N: "400", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
       plan: { n: "78", c: "", nota: "Estimar con ±10 % y 95 % de confianza en un universo de 400 historias." },
       resultados: [R("2026-S1", "64", "78", "Dato de una muestra: mira la horquilla en Tamaño Muestral antes de concluir.")] } },
@@ -147,7 +151,7 @@
       poblacion: "Altas de la unidad en el mes", exclusiones: "Discrepancias justificadas y documentadas por el médico.",
       fuentes: ["Notificación de incidentes", "Historia clínica"], sentido: "menos", estandar: "0", umbral: "", periodicidad: "Mensual", responsable: "Referente de seguridad del paciente de la unidad",
       terminos: "«Evento adverso»: daño al paciente (o necesidad de tratamiento o vigilancia extra) por la omisión o duplicidad de un fármaco.",
-      observaciones: "Minicaso del tema 3. Es un número absoluto: no se puede comparar con otras unidades de distinto tamaño. Si interesa compararlo, conviene pasarlo a tasa por cada 100 altas.",
+      observaciones: "Es un número absoluto: no se puede comparar con otras unidades de distinto tamaño. Si interesa compararlo, conviene pasarlo a tasa por cada 100 altas.",
       calidad: Object.assign(cal({ T: "Mensual.", util: "La unidad puede reforzar la conciliación." }), { comparable: { v: "dudoso", t: "Sin denominador: no sirve para comparar unidades de distinto tamaño." } }), objetivo: "sin", plan: { n: "", c: "", nota: "Se cuentan todos los eventos del mes." } } },
     { titulo: "Radiografías de tobillo (Ottawa)", sub: "Proceso · porcentaje · LQAS", ind: {
       subproceso: "Atención en urgencias", hallazgo: "Radiografías de tobillo pedidas sin indicación", g: "", o: "", d: "",
@@ -158,7 +162,7 @@
       poblacion: "Esguinces de tobillo atendidos en los últimos seis meses", exclusiones: "Menores de 18 años. Politraumatizados.",
       fuentes: ["Historia clínica"], sentido: "mas", estandar: "90", umbral: "75", periodicidad: "Semestral", responsable: "Coordinación médica de urgencias",
       terminos: "«Cumple Ottawa»: consta en la historia al menos uno de los criterios de Ottawa (dolor en maléolo con hipersensibilidad ósea o incapacidad para apoyar).",
-      observaciones: "Ejemplo resuelto de la parte teórica de la unidad temática. Las tablas de Lemeshow dan 33/26, pero su β real es mayor que el 20 %: el plan exacto es 40/33.",
+      observaciones: "Las tablas clásicas de Lemeshow dan 33/26, pero su β real es mayor que el 20 %: el plan exacto es 40/33.",
       calidad: cal({}), objetivo: "decidir", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
       plan: { n: "40", c: "33", nota: "Plan exacto de Tamaño Muestral (90 % / 75 %, α 5 %, β 20 %)." },
       resultados: [R("2026-S1", "35", "40")] } },
@@ -171,7 +175,7 @@
       poblacion: "Pacientes adultos atendidos en el último trimestre", exclusiones: "Pacientes inconscientes o que no pueden comunicarse (se valoran con otra escala).",
       fuentes: ["Historia clínica"], sentido: "mas", estandar: "85", umbral: "60", periodicidad: "Trimestral", responsable: "Supervisión de enfermería de urgencias",
       terminos: "«Registrada»: consta un número de 0 a 10. «No dolor» escrito sin número no cuenta.",
-      observaciones: "Ejemplo resuelto de la parte teórica de la unidad temática. La tabla de Lemeshow da 16/11; el plan exacto es 22/16.",
+      observaciones: "La tabla clásica de Lemeshow da 16/11; el plan exacto es 22/16.",
       calidad: cal({}), objetivo: "decidir", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
       plan: { n: "22", c: "16", nota: "Plan exacto de Tamaño Muestral (85 % / 60 %, α 5 %, β 20 %)." } } },
     { titulo: "Cirugía en lugar equivocado", sub: "Resultado · centinela", ind: {
@@ -328,13 +332,13 @@
         <div class="field"><div class="field-head"><label class="field-label">¿Qué mide? (según lo que miden)</label></div>
           <div class="opt-grid">${Object.keys(L.TIPOS).map(k => { const t = L.TIPOS[k]; return `<button type="button" class="opt-card opt-card--${k}${ind.tipo === k ? " active" : ""}" data-pick="tipo" data-v="${k}"><span class="opt-letra">${t.letra}</span><span class="opt-txt"><b>${t.nom}</b><span class="opt-q">${t.que} · ${PREGUNTA_TIPO[k]}</span><span class="opt-ej">${esc(EJ_TIPO[k])}</span></span></button>`; }).join("")}</div>
         </div>
-        ${campo(ind, "justTipo", "¿Por qué ese tipo?", { area: true, ph: "p. ej. Comprueba si se hace una actividad del protocolo, no el resultado final", help: "La justificación que pide el ejercicio 5A. Te obliga a pensar si de verdad mide lo que crees." })}
+        ${campo(ind, "justTipo", "¿Por qué ese tipo?", { area: true, ph: "p. ej. Comprueba si se hace una actividad del protocolo, no el resultado final", help: "Explicar por qué has elegido ese tipo te obliga a pensar si de verdad mide lo que crees." })}
         <div class="field"><div class="field-head"><label class="field-label">¿Cómo se calcula? (forma de cálculo)</label></div>
           <div class="opt-grid opt-grid--calc">${Object.keys(L.CALCULOS).map(k => { const c = L.CALCULOS[k]; return `<button type="button" class="opt-card${ind.calculo === k ? " active" : ""}" data-pick="calculo" data-v="${k}"><span class="opt-txt"><b>${c.nom}</b><span class="opt-q">${c.que}</span><span class="opt-ej">${esc(EJ_CALC[k])}</span><span class="opt-muestra opt-muestra--${c.muestra === "sí" ? "si" : "no"}">¿Con muestra? ${c.muestra}</span></span></button>`; }).join("")}</div>
         </div>
         <div data-zona="avisos">${avisosHtml(ind, 2)}</div>
       </div>
-      ${ejemplo("el minicaso del tema 3", `<p>Una unidad detecta en su Mapa de Riesgos que la conciliación de la medicación al ingreso es muy vulnerable. Define dos indicadores:</p><ul><li><b>Proceso · porcentaje</b>: % de historias con la conciliación realizada y documentada en las primeras 24 h.</li><li><b>Resultado · número absoluto</b>: nº de eventos adversos por omisiones o duplicidades de medicación al alta.</li></ul>`)}
+      ${ejemplo("conciliación de la medicación", `<p>Una unidad detecta en su Mapa de Riesgos que la conciliación de la medicación al ingreso es muy vulnerable. Define dos indicadores:</p><ul><li><b>Proceso · porcentaje</b>: % de historias con la conciliación realizada y documentada en las primeras 24 h.</li><li><b>Resultado · número absoluto</b>: nº de eventos adversos por omisiones o duplicidades de medicación al alta.</li></ul>`)}
       ${trampa("La media puede maquillar. Un tiempo medio de espera de 20 minutos parece buenísimo, pero puede esconder pacientes de tres horas compensados por otros atendidos al instante. Mejor: «% de pacientes que esperan más de 30 minutos».")}`;
   }
 
@@ -349,9 +353,9 @@
     return `
       ${idea("La definición operativa es la receta: tiene que quedar tan clara que <b>dos personas distintas, con la misma historia, cuenten lo mismo</b>.")}
       ${facil(`
-        <p>El ejercicio 5B pide, para cada indicador: <b>fórmula</b>, <b>fuente de datos</b>, <b>umbral o límite aceptable</b> y <b>observaciones</b>. El tema 3 añade nombre, unidad, periodicidad, responsable y objetivo de referencia.</p>
+        <p>Una buena definición operativa recoge, para cada indicador: <b>nombre</b>, <b>fórmula</b>, <b>unidad</b>, <b>fuente de datos</b>, <b>estándar o límite aceptable</b>, <b>periodicidad</b>, <b>responsable</b> y <b>observaciones</b>.</p>
         <h3>Estándar y umbral, sin líos</h3>
-        <ul><li><b>Estándar</b> (o meta): el nivel que te comprometes a alcanzar. Es el «umbral / límite» de la plantilla 5B. Ejemplo: ≥ 95 %.</li><li><b>Umbral de alarma</b>: el nivel por debajo del cual la situación es claramente mala. Solo hace falta si vas a decidir con LQAS. Ejemplo: 75 %.</li></ul>
+        <ul><li><b>Estándar</b> (o meta): el nivel que te comprometes a alcanzar. A veces se llama «umbral» o «límite aceptable». Ejemplo: ≥ 95 %.</li><li><b>Umbral de alarma</b>: el nivel por debajo del cual la situación es claramente mala. Solo hace falta si vas a decidir con LQAS. Ejemplo: 75 %.</li></ul>
         <h3>El sentido</h3>
         <p>Si el indicador cuenta cosas buenas (valoraciones hechas), <b>más es mejor</b> y el estándar va con ≥. Si cuenta fallos (errores, caídas, demoras), <b>menos es mejor</b> y va con ≤.</p>`)}
       ${!ind.calculo ? `<div class="note">ℹ Elige primero la forma de cálculo en el <a href="#/indicador/${ind.id}/2">paso 2</a>: los campos se adaptan a ella.</div>` : ""}
@@ -372,7 +376,7 @@
           ${sug && !ind.sentido ? `<p class="field-sub">Por el nombre, parece que <b>${sug === "menos" ? "menos es mejor" : "más es mejor"}</b>.</p>` : ""}
         </div>
         ${c === "centinela" ? `<div class="note">ℹ En un centinela el estándar es siempre <b>0 casos</b>: cualquier caso es un aviso.</div>` : `
-        ${campo(ind, "estandar", "Estándar o meta", { num: true, unit: esPct ? "%" : (L.unidad(ind) || ""), ph: esPct ? "p. ej. 95" : "", help: "El nivel que te comprometes a alcanzar (el «umbral / límite» de la plantilla 5B). Se compara con él cada medición. Puede salir de un estándar ACSA, de una guía, de tu histórico o de otras unidades (benchmark).", quick: esPct ? (ind.sentido === "menos" ? ["1", "2", "5", "10"] : ["80", "85", "90", "95", "100"]) : null })}
+        ${campo(ind, "estandar", "Estándar o meta", { num: true, unit: esPct ? "%" : (L.unidad(ind) || ""), ph: esPct ? "p. ej. 95" : "", help: "El nivel que te comprometes a alcanzar (a veces llamado «umbral» o «límite aceptable»). Se compara con él cada medición. Puede salir de un estándar ACSA, de una guía, de tu histórico o de otras unidades (benchmark).", quick: esPct ? (ind.sentido === "menos" ? ["1", "2", "5", "10"] : ["80", "85", "90", "95", "100"]) : null })}
         ${esPct ? campo(ind, "umbral", "Umbral de alarma", { num: true, unit: "%", opt: true, ph: "p. ej. 75", help: "Solo para decidir con LQAS (paso 5): el nivel a partir del cual la situación es claramente mala. Debe quedar " + (ind.sentido === "menos" ? "por encima" : "por debajo") + " del estándar. Cuanto más cerca del estándar, más historias habrá que revisar." }) : ""}`}
         <div data-zona="estandar">${estandarHtml(ind)}</div>
         <div data-zona="avisos">${avisosHtml(ind, 3)}</div>
@@ -415,7 +419,7 @@
     return `
       ${idea("No todo lo que se puede medir aporta valor. Antes de lanzarlo, pásale el filtro <b>SMART</b> y las tres preguntas: <b>¿válido? ¿fiable? ¿útil?</b>")}
       ${facil(`
-        <p><b>SMART</b>: Específico, Medible, Alcanzable, Relevante y Temporal. Algunas plantillas ponen «Realista» en la R; aquí usamos <b>Relevante</b>, como el tema 3, porque «realista» ya está dentro de «alcanzable».</p>
+        <p><b>SMART</b>: Específico, Medible, Alcanzable, Relevante y Temporal. Algunas plantillas ponen «Realista» en la R; aquí usamos <b>Relevante</b> porque «realista» ya está dentro de «alcanzable».</p>
         <p>Además: <b>válido</b> (mide lo que dice medir), <b>fiable</b> (mide siempre lo mismo en las mismas condiciones), <b>útil</b> (alguien puede actuar con el resultado) y <b>comparable</b> (en el tiempo y entre unidades, con el mismo método).</p>
         <p>Las pistas ✓ / ! salen de lo que has escrito en los pasos anteriores. La valoración la haces tú.</p>`)}
       <div class="card">
@@ -467,7 +471,7 @@
       ${campo(ind, "muestra.N", "Tamaño del universo (N)", { num: true, unit: "casos", opt: true, help: "Cuántos casos hay en total para elegir. Si es pequeño, hacen falta menos historias." })}
       ${campo(ind, "muestra.loss", "Pérdidas previstas", { num: true, unit: "%", opt: true, help: "Historias que no se podrán evaluar (no encontradas, incompletas)." })}
       <a class="btn btn--primary btn--tm" data-zona-href="proporcion" href="${esc(links.proporcion)}" target="_blank" rel="noopener">Calcular la muestra en Tamaño Muestral ↗</a>
-      ${practica("La regla práctica de la unidad temática: en evaluaciones internas se usan unas <b>50 historias al azar</b> (mínimo 30). Con tan pocas, solo se detectan cambios grandes.")}`;
+      ${practica("Regla práctica: en evaluaciones internas se usan unas <b>50 historias al azar</b> (mínimo 30). Con tan pocas, solo se detectan cambios grandes.")}`;
     else if (ind.objetivo === "decidir") det = `
       <h3 class="sub-h">Decidir con LQAS</h3>
       <div class="lq-resumen">
@@ -480,7 +484,7 @@
       ${campo(ind, "muestra.beta", "Fuego sin alarma (β)", { num: true, unit: "%", quick: ["10", "20"], help: "Riesgo de dar por bueno un servicio que está en el umbral o peor. Lo habitual: 20 % o 10 %." })}
       ${campo(ind, "muestra.N", "Tamaño del lote (N)", { num: true, unit: "casos", opt: true, help: "Cuántos casos tiene el lote que quieres juzgar. Si no lo sabes, déjalo vacío." })}
       ${lp ? `<a class="btn btn--primary btn--tm" data-zona-href="lqas" href="${esc(links.lqas)}" target="_blank" rel="noopener">Calcular el plan LQAS en Tamaño Muestral ↗</a>` : ""}
-      ${trampa("El LQAS no estima el cumplimiento: si en 16 historias cumplen 12, no puedes escribir «el cumplimiento es del 75 %». Solo «hay» o «no hay evidencia de problema». Y las tablas de Lemeshow del curso son aproximadas: Tamaño Muestral calcula el plan exacto.")}`;
+      ${trampa("El LQAS no estima el cumplimiento: si en 16 historias cumplen 12, no puedes escribir «el cumplimiento es del 75 %». Solo «hay» o «no hay evidencia de problema». Y las tablas clásicas de Lemeshow son aproximadas: Tamaño Muestral calcula el plan exacto.")}`;
     else if (ind.objetivo === "media") det = `
       <h3 class="sub-h">Estimar una media</h3>
       ${campo(ind, "muestra.conf", "Confianza", { num: true, unit: "%", quick: ["90", "95", "99"] })}
@@ -760,8 +764,8 @@
     const n = datos.indicadores.length, nc = datos.compuestos.length;
     view.innerHTML = `
       <section class="hero">
-        <h1 class="hero-t">Del Mapa de Riesgos<br>al <span>indicador</span></h1>
-        <p class="hero-p">Crea, define y comprueba indicadores de calidad y seguridad del paciente paso a paso, como en el curso de auditorías. Sin saber estadística.</p>
+        <h1 class="hero-t"><span>Indicadores</span></h1>
+        <p class="hero-p">Crea, define y comprueba indicadores de calidad y seguridad del paciente paso a paso: del riesgo detectado a la ficha del indicador. Sin necesidad de saber estadística.</p>
         <div class="hero-btns">
           <a class="btn btn--primary btn--grande" href="#/nuevo">+ Nuevo indicador</a>
           <a class="btn btn--grande" href="#/cuadro">Mi cuadro${n || nc ? ` <span class="contador">${n + nc}</span>` : ""}</a>
@@ -769,13 +773,14 @@
       </section>
       <h2 class="sec-t">El camino en seis pasos</h2>
       <ol class="ruta">
-        ${[["Riesgo", "Del hallazgo del Mapa de Riesgos al criterio y al indicador."], ["Tipo", "¿Qué mide? ¿Cómo se calcula? (ejercicio 5A)"], ["Definición", "Numerador, denominador, fuente, estándar… (ejercicio 5B)"], ["Calidad", "SMART, válido, fiable y útil. Pilotaje con dos auditoras."], ["Muestra", "Estimar o decidir, con Tamaño Muestral."], ["Ficha", "Lista para imprimir, compartir o pasar a Excel. Después, <b>registra los resultados</b> de cada periodo frente al estándar (Verificar)."]].map(([t, s], i) => `<li class="ruta-p"><span class="ruta-n">${i + 1}</span><div><b>${t}</b><span>${s}</span></div></li>`).join("")}
+        ${[["Riesgo", "Del hallazgo del Mapa de Riesgos al criterio y al indicador."], ["Tipo", "¿Qué mide? ¿Cómo se calcula?"], ["Definición", "Numerador, denominador, fuente, estándar…"], ["Calidad", "SMART, válido, fiable y útil. Pilotaje con dos auditoras."], ["Muestra", "Estimar o decidir, con Tamaño Muestral."], ["Ficha", "Lista para imprimir, compartir o pasar a Excel. Después, <b>registra los resultados</b> de cada periodo frente al estándar (Verificar)."]].map(([t, s], i) => `<li class="ruta-p"><span class="ruta-n">${i + 1}</span><div><b>${t}</b><span>${s}</span></div></li>`).join("")}
       </ol>
       <div class="guide">
-        <a class="guide-card" href="#/compuesto/nuevo"><span class="guide-num">Σ</span><div><div class="guide-q">Indicador compuesto</div><div class="guide-a">Varios criterios en un número, <b>sin perder el desglose</b> (ejercicio 5C).</div></div><span class="guide-go">›</span></a>
+        <a class="guide-card" href="#/compuesto/nuevo"><span class="guide-num">Σ</span><div><div class="guide-q">Indicador compuesto</div><div class="guide-a">Varios criterios en un número, <b>sin perder el desglose</b>.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card" href="#/aprende"><span class="guide-num">?</span><div><div class="guide-q">Aprende</div><div class="guide-a">Tipos, formas de cálculo, SMART, compuestos y su relación con el <b>PDCA</b>.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card" href="#/prueba"><span class="guide-num">✓</span><div><div class="guide-q">Ponte a prueba</div><div class="guide-a">Doce preguntas para comprobar si lo tienes claro.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card" href="#/glosario"><span class="guide-num">A–Z</span><div><div class="guide-q">Glosario</div><div class="guide-a">Cada término <b>en lenguaje llano</b>, con buscador.</div></div><span class="guide-go">›</span></a>
+        <a class="guide-card guide-card--hermana" href="${L.TM_URL}" target="_blank" rel="noopener"><span class="guide-num">n</span><div><div class="guide-q">Tamaño Muestral ↗</div><div class="guide-a">La app hermana: <b>cuántos casos revisar</b>, plan LQAS y concordancia entre auditoras.</div></div><span class="guide-go">›</span></a>
       </div>
       <h2 class="sec-t">Ejemplos resueltos</h2>
       <p class="page-lead">Tócalos para verlos completos. Se añaden a tu cuadro como copia y puedes modificarlos.</p>
@@ -784,7 +789,7 @@
         <button class="ej-card ej-card--cmp" data-act="cargar-ejemplo-cmp"><b>Atención al infarto (compuesto)</b><span>Compuesto · 6 criterios · 70 %</span></button>
       </div>
       <div class="toolbar"><button class="btn" data-act="cargar-todos">Cargar todos los ejemplos en mi cuadro</button></div>
-      ${trampa("Los ejemplos salen de la parte teórica del curso o son inventados. No se usan los datos de los ejercicios prácticos.")}`;
+      ${practica("Los ejemplos son ilustrativos: sus cifras y estándares son orientativos. Adáptalos siempre a tu unidad.")}`;
   }
 
   // ---------- Cuadro de indicadores ----------
@@ -980,7 +985,7 @@
   function renderAprende() {
     view.innerHTML = `
       <h1 class="page-title">Aprende</h1>
-      <p class="page-lead">Lo esencial del tema 3 del curso, para tenerlo a mano mientras diseñas.</p>
+      <p class="page-lead">Lo esencial sobre indicadores, para tenerlo a mano mientras diseñas.</p>
       <div class="ciclo card">
         <h2 class="sub-h">El círculo completo</h2>
         <ol class="ciclo-l">${["Mapa de Riesgos (AMFE): qué puede fallar y con qué prioridad (IPR)", "Criterio: cómo debería hacerse bien", "Indicador: el criterio convertido en número", "Muestra: cuántos casos revisar (Tamaño Muestral)", "Auditoría: recoger las evidencias", "Informe: comparar con el estándar", "Mejora y seguimiento: actuar y volver a medir"].map(x => `<li>${x}</li>`).join("")}</ol>
@@ -1029,7 +1034,7 @@
     ["Exclusiones", "Casos que no se cuentan, decididos de antemano."],
     ["Fuente de datos", "De dónde sale la información: historia clínica, registros, sistemas de información, notificaciones, observación…"],
     ["Periodicidad", "Cada cuánto se mide el indicador."],
-    ["Estándar", "Nivel que nos comprometemos a alcanzar (meta). En la plantilla 5B aparece como «umbral / límite»."],
+    ["Estándar", "Nivel que nos comprometemos a alcanzar (meta). A veces se llama «umbral» o «límite aceptable»."],
     ["Umbral de alarma", "En LQAS, nivel por debajo del cual la situación es claramente mala."],
     ["Sentido del indicador", "Si es mejor que suba (cumplimientos: estándar con ≥) o que baje (fallos: estándar con ≤)."],
     ["Benchmark", "Valor de referencia de otras unidades o centros con el que compararse."],

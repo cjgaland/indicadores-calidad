@@ -634,3 +634,6 @@ body.ver-informe .print-foot .autor-titulo, body.ver-informe .print-foot .autor,
   .grafico { max-width: 15cm; break-inside: avoid; }
   .ficha-res { break-inside: avoid; }
 }
+.guide-card--hermana { border-color: var(--cyan-glow); background: linear-gradient(160deg, var(--cyan-dim), var(--bg-2)); }
+@media (min-width: 720px) { .guide-card--hermana { grid-column: 1 / -1; } }
+.ruta-p span b { display: inline; font-size: inherit; }

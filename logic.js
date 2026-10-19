@@ -532,24 +532,24 @@
     const T = (texto, estilo = "celda") => ({ texto: texto == null ? "" : String(texto), estilo });
     const inds = datos.indicadores;
     const cab5A = ["Nº", "Subproceso", "Hallazgo", "IPR", "Criterio", "Indicador", "Tipo", "Forma de cálculo", "Justificación", "Específico", "Medible", "Alcanzable", "Relevante", "Temporal", "Válido", "Fiable", "Útil", "Comparable"];
-    const h5A = [[T("Caracterización de indicadores (ejercicio 5A)", "titulo")], [T("Exportado de la app Indicadores · " + fecha, "sub")], cab5A.map(x => T(x, "cab"))];
+    const h5A = [[T("Caracterización de indicadores", "titulo")], [T("Exportado de la app Indicadores · " + fecha, "sub")], cab5A.map(x => T(x, "cab"))];
     inds.forEach((ind, i) => h5A.push([T(i + 1, "centro"), T(ind.subproceso), T(ind.hallazgo), T(ipr(ind.g, ind.o, ind.d) || "", "centro"), T(ind.criterio), T(ind.nombre),
       T(TIPOS[ind.tipo] ? TIPOS[ind.tipo].nom : ""), T(CALCULOS[ind.calculo] ? CALCULOS[ind.calculo].nom : ""), T(ind.justTipo),
       ...CALIDAD.map(q => T(calTexto(ind, q.k)))]));
     h5A[0][0].combinar = cab5A.length;
     const cab5B = ["Nº", "Subproceso", "Hallazgo", "Indicador", "Numerador", "Denominador", "Fórmula", "Unidad", "Población y exclusiones", "Fuente de datos", "Sentido", "Estándar", "Umbral de alarma", "Periodicidad", "Responsable", "Definición de términos", "Observaciones", "Plan de muestreo"];
-    const h5B = [[T("Definición operativa de indicadores (ejercicio 5B)", "titulo")], [T("Exportado de la app Indicadores · " + fecha, "sub")], cab5B.map(x => T(x, "cab"))];
+    const h5B = [[T("Definición operativa de indicadores", "titulo")], [T("Exportado de la app Indicadores · " + fecha, "sub")], cab5B.map(x => T(x, "cab"))];
     inds.forEach((ind, i) => h5B.push([T(i + 1, "centro"), T(ind.subproceso), T(ind.hallazgo), T(ind.nombre), T(ind.numerador), T(usaDenominador(ind.calculo) ? ind.denominador : "—"),
       T(formula(ind)), T(unidad(ind)), T([ind.poblacion, lleno(ind.exclusiones) ? "Excluye: " + ind.exclusiones : ""].filter(lleno).join(". ")), T(fuentesTexto(ind)),
       T(ind.sentido === "menos" ? "Menos es mejor" : ind.sentido === "mas" ? "Más es mejor" : ""), T(textoEstandar(ind)), T(textoEstandar(ind, "umbral")),
       T(ind.periodicidad), T(ind.responsable), T(ind.terminos), T(ind.observaciones), T(textoPlan(ind))]));
     h5B[0][0].combinar = cab5B.length;
     const hojas = [
-      { nombre: "5A Caracterización", filas: h5A, opciones: { anchoColumnas: [5, 18, 22, 6, 28, 32, 12, 14, 28, 18, 18, 18, 18, 18, 18, 18, 18, 18], congelar: { filas: 3, columnas: 0 }, altoFilas: { 1: 24 } } },
-      { nombre: "5B Definición operativa", filas: h5B, opciones: { anchoColumnas: [5, 18, 22, 32, 26, 26, 30, 12, 26, 22, 14, 14, 14, 13, 18, 30, 26, 24], congelar: { filas: 3, columnas: 0 }, altoFilas: { 1: 24 } } }
+      { nombre: "Caracterización", filas: h5A, opciones: { anchoColumnas: [5, 18, 22, 6, 28, 32, 12, 14, 28, 18, 18, 18, 18, 18, 18, 18, 18, 18], congelar: { filas: 3, columnas: 0 }, altoFilas: { 1: 24 } } },
+      { nombre: "Definición operativa", filas: h5B, opciones: { anchoColumnas: [5, 18, 22, 32, 26, 26, 30, 12, 26, 22, 14, 14, 14, 13, 18, 30, 26, 24], congelar: { filas: 3, columnas: 0 }, altoFilas: { 1: 24 } } }
     ];
     if (datos.compuestos.length) {
-      const hc = [[T("Indicadores compuestos (ejercicio 5C)", "titulo", 5)], [T("Compuesto = Σ cumplimientos ÷ Σ oportunidades × 100. Nunca sin su desglose.", "sub")]];
+      const hc = [[T("Indicadores compuestos", "titulo", 5)], [T("Compuesto = Σ cumplimientos ÷ Σ oportunidades × 100. Nunca sin su desglose.", "sub")]];
       hc[0][0].combinar = 5;
       datos.compuestos.forEach(c => {
         const r = calcCompuesto(c.rows);
@@ -562,7 +562,7 @@
         hc.push([T("Conclusión: " + (lleno(c.conclusion) ? c.conclusion : fraseCompuesto(c.nombre, r)))]);
         hc[hc.length - 1][0].combinar = 5;
       });
-      hojas.push({ nombre: "5C Compuestos", filas: hc, opciones: { anchoColumnas: [46, 15, 15, 15, 20] } });
+      hojas.push({ nombre: "Compuestos", filas: hc, opciones: { anchoColumnas: [46, 15, 15, 15, 20] } });
     }
     const conRes = inds.map((ind, i) => ({ ind, i, a: analizarResultados(ind) })).filter(x => x.a.filas.some(f => !f.vacio));
     if (conRes.length) {

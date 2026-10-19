@@ -70,7 +70,9 @@
       calidad: {}, piloto: { a: "", b: "", c: "", d: "" },
       // Paso 5 · Muestra
       objetivo: "", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
-      plan: { n: "", c: "", nota: "" }
+      plan: { n: "", c: "", nota: "" },
+      // Fase 2 · Resultados por periodo (Verificar del PDCA)
+      resultados: []
     };
   }
   function nuevoCompuesto(id, fecha) {
@@ -300,6 +302,168 @@
     return f;
   }
 
+  // ---------- Fase 2 · Resultados por periodo (Verificar del PDCA) ----------
+  // Cada medición: { periodo, num, den, valor, nota }. «valor» solo se usa si no hay numerador/denominador
+  // (dato ya calculado) o en la media. Esta app no calcula LQAS: aplica la regla n/c anotada en el paso 5.
+  const nuevaMedicion = (periodo = "") => ({ periodo, num: "", den: "", valor: "", nota: "" });
+  // Recuentos con puntos de millar («2.950 estancias» = 2950)
+  function numMiles(s) {
+    const t = String(s == null ? "" : s).trim();
+    if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) return Number(t.replace(/\./g, "").replace(",", "."));
+    return num(t);
+  }
+  const esLqas = ind => ind.objetivo === "decidir";
+  const conMuestra = ind => ["estimar", "decidir", "media"].includes(ind.objetivo);
+  // Etiquetas de los campos según la forma de cálculo
+  function camposMedicion(ind) {
+    const c = ind.calculo;
+    if (esLqas(ind)) return { num: "Numerador", den: "Revisados (n)", valor: false };
+    if (c === "centinela" || c === "absoluto") return { num: "Nº de casos", den: false, valor: false };
+    if (c === "media") return { num: false, den: "Casos medidos", valor: "Media", valorOblig: true };
+    if (c === "tasa") return { num: "Casos", den: "Denominador", valor: "Ya calculada" };
+    if (c === "porcentaje" || c === "compuesto") return { num: c === "compuesto" ? "Σ cumplimientos" : "Numerador", den: c === "compuesto" ? "Σ oportunidades" : "Denominador", valor: "% ya calculado" };
+    return { num: "Numerador", den: "Denominador", valor: "Ya calculado" };
+  }
+  // Decimales con los que se muestra (y se compara con el estándar) cada forma de cálculo
+  const decimales = ind => ["centinela", "absoluto"].includes(ind.calculo) ? 0 : ["tasa", "ratio"].includes(ind.calculo) ? 2 : 1;
+  const redondea = (x, d) => Math.round(x * 10 ** d) / 10 ** d;
+  const malNum = x => x === null || Number.isNaN(x);
+  // Valora una medición: valor, semáforo (verde · rojo · gris) y motivo
+  function evaluarMedicion(ind, m) {
+    m = m || {};
+    const out = { vacio: false, error: "", valor: null, estado: "gris", motivo: "", lqas: null };
+    const num_ = numMiles(m.num), den_ = numMiles(m.den), val_ = num(m.valor);
+    if ([m.num, m.den, m.valor].every(v => !lleno(v))) { out.vacio = true; out.motivo = "Sin datos"; return out; }
+    if ([num_, den_, val_].some(x => Number.isNaN(x))) { out.error = "Escribe solo números."; return out; }
+    const c = ind.calculo, est = num(ind.estandar);
+    // LQAS: se aplica la regla anotada (verde si los casos correctos llegan a c)
+    if (esLqas(ind)) {
+      const n = num(ind.plan && ind.plan.n), cc = num(ind.plan && ind.plan.c);
+      if (malNum(n) || malNum(cc) || !Number.isInteger(n) || !Number.isInteger(cc) || n <= 0 || cc > n) { out.error = "Anota primero n y c del plan LQAS en el paso 5."; return out; }
+      const rev = den_ === null ? n : den_;
+      if (num_ === null) { out.error = "Escribe el numerador (cuántos casos lo cumplen" + (ind.sentido === "menos" ? ", o cuántos fallan si el indicador cuenta fallos" : "") + ")."; return out; }
+      if (!Number.isInteger(num_) || !Number.isInteger(rev) || num_ < 0 || rev <= 0) { out.error = "Escribe números enteros (0, 1, 2…)."; return out; }
+      if (num_ > rev) { out.error = `El numerador (${num_}) no puede superar a los revisados (${rev}).`; return out; }
+      const correctos = ind.sentido === "menos" ? rev - num_ : num_, fallos = rev - correctos;
+      out.valor = num_ / rev * 100;
+      out.lqas = { n, c: cc, rev, correctos, fallos, faltan: Math.max(0, n - rev) };
+      if (rev > n) { out.motivo = `El plan es revisar ${n}: aplica la regla solo a los ${n} primeros del sorteo.`; return out; }
+      if (correctos >= cc) { out.estado = "verde"; out.motivo = `${correctos} de ${rev} correctos; la regla pide al menos ${cc} de ${n}.` + (rev < n ? " Ya es verde aunque falten casos." : ""); }
+      else if (fallos > n - cc) { out.estado = "rojo"; out.motivo = `${correctos} de ${rev} correctos; la regla pide al menos ${cc} de ${n}.` + (rev < n ? " Ya es rojo aunque falten casos." : ""); }
+      else out.motivo = `Faltan ${n - rev} casos por revisar: la regla solo vale con los ${n} del plan.`;
+      return out;
+    }
+    let v = null;
+    if (c === "centinela" || c === "absoluto") {
+      if (num_ === null) { out.error = "Escribe el número de casos."; return out; }
+      if (!Number.isInteger(num_) || num_ < 0) { out.error = "El número de casos es un entero (0, 1, 2…)."; return out; }
+      v = num_;
+    } else if (c === "media") {
+      if (val_ === null) { out.error = "Escribe la media del periodo."; return out; }
+      v = val_;
+    } else if (num_ !== null || den_ !== null) {
+      if (num_ === null || den_ === null) { out.error = "Faltan el numerador o el denominador."; return out; }
+      if (num_ < 0 || den_ <= 0) { out.error = "El denominador tiene que ser mayor que 0."; return out; }
+      if ((c === "porcentaje" || c === "compuesto") && num_ > den_) { out.error = `El numerador (${num_}) no puede superar al denominador (${den_}).`; return out; }
+      const base = c === "tasa" ? (lleno(ind.base) ? numMiles(ind.base) : 1000) : 1;
+      if (malNum(base) || base <= 0) { out.error = "Revisa la base de la tasa en el paso 3 (p. ej. 1.000)."; return out; }
+      v = c === "porcentaje" || c === "compuesto" ? num_ / den_ * 100 : c === "tasa" ? num_ / den_ * base : num_ / den_;
+    } else v = val_;
+    if ((c === "porcentaje" || c === "compuesto") && (v < 0 || v > 100)) { out.error = "Un porcentaje va de 0 a 100."; return out; }
+    out.valor = v;
+    if (c === "centinela") { out.estado = v === 0 ? "verde" : "rojo"; out.motivo = v === 0 ? "Ningún caso." : `${v} caso${v === 1 ? "" : "s"}: analiza cada uno (análisis causa raíz).`; return out; }
+    if (!ind.sentido || malNum(est)) { out.motivo = "Sin estándar o sin sentido (paso 3): no se puede comparar."; return out; }
+    const vr = redondea(v, decimales(ind)), cumple = ind.sentido === "menos" ? vr <= est : vr >= est;
+    out.estado = cumple ? "verde" : "rojo";
+    out.motivo = cumple ? "Cumple el estándar." : "No cumple el estándar.";
+    return out;
+  }
+  // Texto del valor con su unidad: «92,5 %», «0,65 por 1.000 estancias», «3 casos»
+  function textoValor(ind, v) {
+    if (!Number.isFinite(v)) return "—";
+    const u = unidad(ind), dec = decimales(ind);
+    const t = redondea(v, dec).toFixed(dec).replace(".", ",");
+    return t + (u === "%" ? " %" : u ? " " + u : "");
+  }
+  // Lo que se enseña como «valor» de una medición: en LQAS, los casos correctos (no un %)
+  function textoResultado(ind, f) {
+    if (f.lqas) return `${f.lqas.correctos} de ${f.lqas.rev} correctos`;
+    return f.valor === null ? "—" : textoValor(ind, f.valor);
+  }
+  // Serie completa y resumen de la tendencia (sin pruebas estadísticas)
+  function analizarResultados(ind) {
+    const filas = (ind.resultados || []).map((m, i) => Object.assign({ i, periodo: lleno(m.periodo) ? m.periodo.trim() : `Periodo ${i + 1}` }, evaluarMedicion(ind, m)));
+    const validas = filas.filter(f => !f.vacio && !f.error && f.valor !== null);
+    const juzgadas = validas.filter(f => f.estado !== "gris");
+    const frases = [];
+    const ult = juzgadas.slice(-4);
+    if (ult.length) {
+      const v = ult.filter(f => f.estado === "verde").length;
+      frases.push(`${esLqas(ind) ? "Verde" : "Cumple el estándar"} en ${v} de ${ult.length === juzgadas.length ? "los " + ult.length : "los últimos " + ult.length} periodo${ult.length === 1 ? "" : "s"}.`);
+      let racha = 0; for (let k = juzgadas.length - 1; k >= 0 && juzgadas[k].estado === "rojo"; k--) racha++;
+      if (racha >= 2) frases.push(`${racha} periodos seguidos en rojo: toca actuar (analizar causas y planificar mejoras).`);
+      else if (racha === 1) frases.push("El último periodo está en rojo: busca qué ha fallado antes de que se repita.");
+    }
+    let cambio = "";
+    if (!esLqas(ind) && validas.length >= 2 && ind.sentido) {
+      const a = validas[validas.length - 2].valor, b = validas[validas.length - 1].valor;
+      const mejor = ind.sentido === "menos" ? b < a : b > a;
+      cambio = redondea(a, decimales(ind)) === redondea(b, decimales(ind)) ? "igual" : mejor ? "mejora" : "empeora";
+      frases.push(cambio === "igual" ? "Igual que el periodo anterior." : `${cambio === "mejora" ? "Mejora" : "Empeora"} respecto al periodo anterior (${textoValor(ind, a)} → ${textoValor(ind, b)}).`);
+    }
+    if (validas.length && validas.length < 3) frases.push("Con menos de tres periodos todavía no se puede hablar de tendencia.");
+    return { filas, validas, ultima: validas[validas.length - 1] || null, cambio, frases };
+  }
+  // Eje vertical del gráfico: mínimo, máximo y marcas «redondas»
+  function ejeY(valores, estandar, esPct) {
+    const vs = valores.filter(Number.isFinite).concat(Number.isFinite(estandar) ? [estandar] : []);
+    if (!vs.length) return { min: 0, max: esPct ? 100 : 1, marcas: esPct ? [0, 25, 50, 75, 100] : [0, 1] };
+    let lo = Math.min(...vs), hi = Math.max(...vs);
+    if (hi === lo) { hi = hi + (hi === 0 ? 1 : Math.abs(hi) * 0.1); lo = lo - (lo === 0 ? 0 : Math.abs(lo) * 0.1); }
+    const pad = (hi - lo) * 0.15; lo -= pad; hi += pad;
+    if (Math.min(...vs) >= 0) lo = Math.max(0, lo);
+    if (esPct) { lo = Math.max(0, lo); hi = Math.min(100, hi); }
+    const bruto = (hi - lo) / 4, pot = 10 ** Math.floor(Math.log10(bruto));
+    const paso = [1, 2, 2.5, 5, 10].map(k => k * pot).find(k => k >= bruto) || 10 * pot;
+    const min = Math.floor(lo / paso) * paso, max = Math.ceil(hi / paso) * paso, marcas = [];
+    for (let x = min; x <= max + paso / 1e6; x += paso) marcas.push(Math.round(x * 1e6) / 1e6);
+    return { min, max, marcas };
+  }
+  // Periodo siguiente para el botón «Añadir periodo»: 2026-T4 → 2027-T1, Ene 2026 → Feb 2026, 2026 → 2027
+  const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  function siguientePeriodo(prev) {
+    const p = String(prev || "").trim();
+    let m;
+    if ((m = /^(\d{4})-([TSQ])(\d)$/i.exec(p))) {
+      const max = { T: 4, S: 2, Q: 2 }[m[2].toUpperCase()], k = Number(m[3]);
+      return k >= max ? `${Number(m[1]) + 1}-${m[2]}1` : `${m[1]}-${m[2]}${k + 1}`;
+    }
+    if ((m = /^(\d{4})$/.exec(p))) return String(Number(m[1]) + 1);
+    if ((m = /^([a-záéíóú]+)\.?\s+(\d{4})$/i.exec(p))) {
+      const i = MESES.indexOf(sinTildes(m[1]).slice(0, 3)); if (i < 0) return "";
+      const may = m[1][0] === m[1][0].toUpperCase(), sig = MESES[(i + 1) % 12];
+      return `${may ? sig[0].toUpperCase() + sig.slice(1) : sig} ${i === 11 ? Number(m[2]) + 1 : m[2]}`;
+    }
+    if ((m = /^(.*?)(\d+)$/.exec(p))) return m[1] + (Number(m[2]) + 1);
+    return "";
+  }
+  function ejemploPeriodo(periodicidad) {
+    return { "Mensual": "Ene 2026", "Trimestral": "2026-T1", "Semestral": "2026-S1", "Anual": "2026", "Semanal": "Semana 1" }[periodicidad] || "p. ej. 2026-T1";
+  }
+  // Enlace a «Ya tengo los resultados» de Tamaño Muestral con los datos de la medición
+  function enlaceAnalisis(ind, m) {
+    const ev = evaluarMedicion(ind, m), mm = ind.muestra || {};
+    if (esLqas(ind)) {
+      const lp = lqasParams(ind); if (!lp || !ev.lqas) return "";
+      return enlaceTM("lqas", { pU: nfmt(lp.pU).replace(",", "."), pL: nfmt(lp.pL).replace(",", "."), alpha: mm.alpha, beta: mm.beta, N: mm.N, loss: mm.loss, an_rev: ev.lqas.rev, an_cum: ev.lqas.correctos });
+    }
+    if (ind.calculo !== "porcentaje" || ev.error || ev.vacio) return "";
+    const n_ = numMiles(m.num), d_ = numMiles(m.den);
+    if (n_ === null || d_ === null || !Number.isInteger(n_) || !Number.isInteger(d_)) return "";
+    const est = num(ind.estandar), inv = ind.sentido === "menos";
+    return enlaceTM("proporcion", { conf: mm.conf, e: mm.e, p: mm.p || "50", N: mm.N, loss: mm.loss, an_rev: d_, an_cum: inv ? d_ - n_ : n_, an_est: malNum(est) || est <= 0 || est >= 100 ? "" : nfmt(inv ? 100 - est : est).replace(",", ".") });
+  }
+
   // ---------- Datos: validación de lo que se importa o llega por enlace ----------
   const CAMPOS_TEXTO = ["subproceso", "hallazgo", "g", "o", "d", "criterio", "nombre", "tipo", "justTipo", "calculo",
     "numerador", "denominador", "base", "unidad", "poblacion", "exclusiones", "fuenteOtra", "sentido", "estandar", "umbral",
@@ -321,6 +485,8 @@
     ["piloto", "muestra", "plan"].forEach(g => {
       if (o[g] && typeof o[g] === "object") Object.keys(ind[g]).forEach(k => { if (o[g][k] !== undefined) ind[g][k] = txt(o[g][k], g === "plan" ? 500 : 20); });
     });
+    if (Array.isArray(o.resultados)) ind.resultados = o.resultados.slice(0, 200).filter(m => m && typeof m === "object")
+      .map(m => ({ periodo: txt(m.periodo, 60), num: txt(m.num, 20), den: txt(m.den, 20), valor: txt(m.valor, 20), nota: txt(m.nota, 500) }));
     return ind;
   }
   function sanearCompuesto(o, idNuevo, fecha) {
@@ -356,7 +522,9 @@
     celda: { ajustarTexto: true, vertical: "top" },
     centro: { alineacion: "center", vertical: "top", ajustarTexto: true },
     total: { negrita: true, colorFondo: "E6F3F7" },
-    flojo: { colorFondo: "FBF0DC", ajustarTexto: true }
+    flojo: { colorFondo: "FBF0DC", ajustarTexto: true },
+    verde: { colorFondo: "DCFCE7", colorTexto: "14532D", negrita: true, alineacion: "center", vertical: "top", ajustarTexto: true },
+    rojo: { colorFondo: "FFE4E6", colorTexto: "881337", negrita: true, alineacion: "center", vertical: "top", ajustarTexto: true }
   };
   const fuentesTexto = ind => [...(ind.fuentes || []), ind.fuenteOtra].filter(lleno).join(", ");
   const calTexto = (ind, k) => { const c = (ind.calidad || {})[k] || {}; const v = { si: "Sí", dudoso: "Dudoso", no: "No" }[c.v] || ""; return [v, c.t].filter(lleno).join(". "); };
@@ -396,6 +564,20 @@
       });
       hojas.push({ nombre: "5C Compuestos", filas: hc, opciones: { anchoColumnas: [46, 15, 15, 15, 20] } });
     }
+    const conRes = inds.map((ind, i) => ({ ind, i, a: analizarResultados(ind) })).filter(x => x.a.filas.some(f => !f.vacio));
+    if (conRes.length) {
+      const cabR = ["Nº", "Indicador", "Estándar", "Periodo", "Numerador", "Denominador", "Valor", "Resultado", "Detalle", "Nota"];
+      const hr = [[T("Resultados por periodo (Verificar del PDCA)", "titulo")], [T("Exportado de la app Indicadores · " + fecha + ". En LQAS el valor es solo el dato de la muestra: LQAS decide, no mide.", "sub")], cabR.map(x => T(x, "cab"))];
+      hr[0][0].combinar = cabR.length;
+      conRes.forEach(({ ind, i, a }) => a.filas.filter(f => !f.vacio).forEach(f => {
+        const m = ind.resultados[f.i];
+        const res = f.error ? "Revisar" : f.estado === "verde" ? (esLqas(ind) ? "Verde (LQAS)" : "Cumple") : f.estado === "rojo" ? (esLqas(ind) ? "Rojo (LQAS)" : "No cumple") : "Sin valorar";
+        hr.push([T(i + 1, "centro"), T(ind.nombre), T(esLqas(ind) ? textoEstandar(ind) + " · n = " + (ind.plan.n || "?") + ", c = " + (ind.plan.c || "?") : textoEstandar(ind)), T(f.periodo),
+          T(m.num, "centro"), T(m.den || (f.lqas ? f.lqas.rev : ""), "centro"), T(f.valor === null ? "" : textoResultado(ind, f), "centro"),
+          T(res, f.error ? "centro" : f.estado === "verde" ? "verde" : f.estado === "rojo" ? "rojo" : "centro"), T(f.error || f.motivo), T(m.nota)]);
+      }));
+      hojas.push({ nombre: "Resultados", filas: hr, opciones: { anchoColumnas: [5, 40, 18, 14, 12, 13, 18, 14, 40, 30], congelar: { filas: 3, columnas: 0 }, altoFilas: { 1: 24 } } });
+    }
     return { estilos: ESTILOS_XLSX, hojas };
   }
   function textoPlan(ind) {
@@ -413,6 +595,7 @@
     num, lleno, nfmt, sinTildes, nuevoIndicador, nuevoCompuesto, ipr, sugerirNombre, sentidoSugerido,
     unidadPorDefecto, unidad, formula, usaDenominador, textoEstandar, avisos, pistasCalidad, estadoCalidad, acuerdoPiloto,
     pasosCompletos, recomendacionMuestra, lqasParams, enlaceTM, enlacesTM, calcCompuesto, fraseCompuesto, pct1,
+    nuevaMedicion, numMiles, esLqas, conMuestra, camposMedicion, evaluarMedicion, textoValor, textoResultado, analizarResultados, ejeY, siguientePeriodo, ejemploPeriodo, enlaceAnalisis,
     sanearIndicador, sanearCompuesto, sanearDatos, fusionar, hojasExcel, textoPlan, fuentesTexto
   };
   if (typeof module !== "undefined" && module.exports) module.exports = API; else raiz.Logica = API;

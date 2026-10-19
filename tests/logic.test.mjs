@@ -115,5 +115,86 @@ const s2 = Buffer.from(bytes).toString("utf8");
 t("Excel: una sola hoja seleccionada", (s2.match(/tabSelected/g) || []).length === 1);
 t("Excel: texto escapado", !/<t xml:space="preserve"><img/.test(Buffer.from(X.construirLibroXlsx(L.hojasExcel(s, "x"))).toString("utf8")));
 
+// Fase 2 · Resultados por periodo
+const M = (num, den, valor = "", periodo = "") => ({ periodo, num, den, valor, nota: "" });
+t("numMiles: 2.950 = 2950", L.numMiles("2.950") === 2950 && L.numMiles("12.345,5") === 12345.5 && L.numMiles("2,5") === 2.5);
+// Porcentaje, más es mejor (≥ 95 %)
+let e1 = L.evaluarMedicion(ind, M("46", "50"));
+t("porcentaje 46/50 = 92 % rojo", cerca(e1.valor, 92) && e1.estado === "rojo");
+t("porcentaje 48/50 = 96 % verde", L.evaluarMedicion(ind, M("48", "50")).estado === "verde");
+t("porcentaje: 94,96 % redondea a 95,0 → verde", L.evaluarMedicion(ind, M("", "", "94,96")).estado === "verde");
+t("porcentaje: valor directo", cerca(L.evaluarMedicion(ind, M("", "", "97,5")).valor, 97.5));
+t("porcentaje: num > den = error", !!L.evaluarMedicion(ind, M("51", "50")).error);
+t("porcentaje: falta el denominador = error", !!L.evaluarMedicion(ind, M("5", "")).error);
+t("porcentaje: texto = error", !!L.evaluarMedicion(ind, M("cinco", "50")).error);
+t("medición vacía", L.evaluarMedicion(ind, M("", "")).vacio);
+t("textoValor %", L.textoValor(ind, 92) === "92,0 %");
+// Menos es mejor (≤ 10 %)
+const esp = Object.assign(L.nuevoIndicador("r1", ""), { calculo: "porcentaje", sentido: "menos", estandar: "10" });
+t("menos es mejor: 12,6 % rojo", L.evaluarMedicion(esp, M("312", "2.480")).estado === "rojo");
+t("menos es mejor: 9,2 % verde", L.evaluarMedicion(esp, M("230", "2.510")).estado === "verde");
+// Tasa con base 1.000 y miles en el denominador
+const tas = Object.assign(L.nuevoIndicador("r2", ""), { calculo: "tasa", numerador: "caídas", denominador: "estancias", base: "1.000", sentido: "menos", estandar: "1" });
+const et = L.evaluarMedicion(tas, M("3", "2.950"));
+t("tasa 3/2.950 × 1.000 = 1,02 rojo", cerca(et.valor, 3 / 2950 * 1000) && et.estado === "rojo");
+t("textoValor tasa", L.textoValor(tas, 0.645) === "0,65 por 1.000 estancias");
+// Centinela
+t("centinela 0 verde, 1 rojo", L.evaluarMedicion(cent, M("0", "")).estado === "verde" && L.evaluarMedicion(cent, M("1", "")).estado === "rojo");
+t("centinela decimal = error", !!L.evaluarMedicion(cent, M("1,5", "")).error);
+// Sin estándar → gris
+t("sin estándar = gris", L.evaluarMedicion(Object.assign(L.nuevoIndicador("x", ""), { calculo: "porcentaje" }), M("4", "5")).estado === "gris");
+// Media
+const med = Object.assign(L.nuevoIndicador("r3", ""), { calculo: "media", sentido: "menos", estandar: "20" });
+t("media 18 ≤ 20 verde", L.evaluarMedicion(med, M("", "40", "18")).estado === "verde");
+t("media sin valor = error", !!L.evaluarMedicion(med, M("", "40", "")).error);
+// LQAS (UPP 95/75 → n 16, c 14)
+const upp = Object.assign(L.nuevoIndicador("r4", ""), { calculo: "porcentaje", sentido: "mas", estandar: "95", umbral: "75", objetivo: "decidir", plan: { n: "16", c: "14", nota: "" } });
+t("LQAS 15/16 verde", L.evaluarMedicion(upp, M("15", "16")).estado === "verde");
+t("LQAS 13/16 rojo", L.evaluarMedicion(upp, M("13", "16")).estado === "rojo");
+t("LQAS revisados vacío = n del plan", L.evaluarMedicion(upp, M("14", "")).lqas.rev === 16);
+t("LQAS 14 de 14 revisados ya es verde", L.evaluarMedicion(upp, M("14", "14")).estado === "verde");
+t("LQAS 7 de 10 revisados ya es rojo (3 fallos > 2)", L.evaluarMedicion(upp, M("7", "10")).estado === "rojo");
+t("LQAS 9 de 10 revisados = falta revisar (gris)", L.evaluarMedicion(upp, M("9", "10")).estado === "gris");
+t("LQAS más revisados que n = gris", L.evaluarMedicion(upp, M("18", "20")).estado === "gris");
+t("LQAS sin plan = error", !!L.evaluarMedicion(Object.assign({}, upp, { plan: { n: "", c: "" } }), M("15", "16")).error);
+const uppF = Object.assign({}, upp, { sentido: "menos", estandar: "5", umbral: "25" });
+t("LQAS de fallos: 1 fallo de 16 → 15 correctos, verde", L.evaluarMedicion(uppF, M("1", "16")).estado === "verde" && L.evaluarMedicion(uppF, M("1", "16")).lqas.correctos === 15);
+t("textoResultado LQAS = casos correctos", L.textoResultado(upp, L.evaluarMedicion(upp, M("13", "16"))) === "13 de 16 correctos");
+const urlA = L.enlaceAnalisis(upp, M("13", "16"));
+const dA = JSON.parse(decodeURIComponent(urlA.split("?d=")[1]));
+t("enlace a «Ya tengo los resultados» (LQAS)", urlA.includes("#/lqas?d=") && dA.an_cum === "13" && dA.an_rev === "16" && dA.pU === "95" && dA.pL === "75");
+const conc = Object.assign(L.nuevoIndicador("r5", ""), { calculo: "porcentaje", sentido: "mas", estandar: "90", objetivo: "estimar", muestra: { conf: "95", e: "10", p: "", N: "400" } });
+const dPr = JSON.parse(decodeURIComponent(L.enlaceAnalisis(conc, M("64", "78")).split("?d=")[1]));
+t("enlace proporción con an_rev/an_cum/an_est", dPr.an_rev === "78" && dPr.an_cum === "64" && dPr.an_est === "90" && dPr.N === "400");
+const dPi = JSON.parse(decodeURIComponent(L.enlaceAnalisis(esp, M("8", "80")).split("?d=")[1]));
+t("enlace proporción de fallos se invierte", dPi.an_cum === "72" && dPi.an_est === "90");
+// Resumen de la serie
+tas.resultados = [M("3", "2.950", "", "2026-T1"), M("2", "3.100", "", "2026-T2"), M("1", "3.000", "", "2026-T3")];
+const an = L.analizarResultados(tas);
+t("serie: 3 válidas, última verde", an.validas.length === 3 && an.ultima.estado === "verde");
+t("serie: cumple en 2 de 3 y mejora", /2 de los 3/.test(an.frases[0]) && an.cambio === "mejora");
+upp.resultados = [M("15", "16"), M("13", "16"), M("12", "16")];
+const an2 = L.analizarResultados(upp);
+t("serie LQAS: racha de 2 rojos", an2.frases.some(f => /2 periodos seguidos en rojo/.test(f)) && an2.cambio === "");
+// Eje del gráfico
+const ej = L.ejeY([92, 96, 98], 95, true);
+t("ejeY: incluye valores y estándar, ≤ 100", ej.min <= 92 && ej.max >= 98 && ej.max <= 100 && ej.marcas.length >= 3);
+const ej0 = L.ejeY([0, 0], 0, false);
+t("ejeY: todo cero no rompe", ej0.max > ej0.min);
+// Periodo siguiente
+t("siguientePeriodo", L.siguientePeriodo("2026-T4") === "2027-T1" && L.siguientePeriodo("2026-S1") === "2026-S2" && L.siguientePeriodo("2026") === "2027"
+  && L.siguientePeriodo("Dic 2026") === "Ene 2027" && L.siguientePeriodo("ene 2026") === "feb 2026" && L.siguientePeriodo("Semana 9") === "Semana 10" && L.siguientePeriodo("") === "");
+// Copia de seguridad: se validan los resultados
+const sr = L.sanearIndicador({ resultados: [{ periodo: "2026-T1", num: 3, den: "2.950", nota: "x".repeat(900), raro: 1 }, "basura", null] }, "z", "");
+t("sanea resultados", sr.resultados.length === 1 && sr.resultados[0].num === "3" && sr.resultados[0].nota.length === 500 && !("raro" in sr.resultados[0]));
+t("sanea: sin resultados = []", Array.isArray(L.sanearIndicador({}, "z", "").resultados) && !L.sanearIndicador({}, "z", "").resultados.length);
+// Excel con hoja de resultados
+const libroR = L.hojasExcel({ indicadores: [tas, upp], compuestos: [] }, "x");
+const hR = libroR.hojas.find(h => h.nombre === "Resultados");
+t("Excel: hoja Resultados con 6 filas de datos", hR && hR.filas.length === 3 + 6);
+t("Excel: semáforo coloreado", hR.filas[3][7].estilo === "rojo" && hR.filas[5][7].estilo === "verde");
+const bR = X.construirLibroXlsx(libroR);
+t("Excel con resultados: ZIP válido", bR[0] === 0x50 && bR[1] === 0x4b);
+
 console.log(`${ok} correctos, ${mal} fallidos`);
 if (mal) process.exit(1);

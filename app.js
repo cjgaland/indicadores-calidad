@@ -101,6 +101,8 @@
   }
 
   // ---------- Ejemplos (de la parte teórica del curso o inventados; NO de los ejercicios prácticos) ----------
+  // Mediciones inventadas para enseñar la fase «Verificar»
+  const R = (periodo, num, den, nota = "") => ({ periodo, num, den, valor: "", nota });
   const cal = (t) => Object.fromEntries(L.CALIDAD.map(q => [q.k, { v: "si", t: t[q.k] || "" }]));
   const EJEMPLOS = [
     { titulo: "Valoración del riesgo de UPP", sub: "Proceso · porcentaje · LQAS", ind: {
@@ -116,7 +118,8 @@
       calidad: cal({ E: "Un solo criterio, en una población y un plazo concretos.", M: "Cumple / no cumple en cada historia.", A: "Se revisan unas pocas historias al trimestre.", R: "Sale de un riesgo priorizado del Mapa de Riesgos.", T: "Trimestral.", valido: "Mide la valoración hecha, no solo que exista el formulario.", fiable: "Términos definidos y pilotado con dos auditoras.", util: "La supervisión puede reforzar la formación y el recordatorio.", comparable: "Mismo método cada trimestre y entre unidades." }),
       piloto: { a: "24", b: "1", c: "1", d: "4" },
       objetivo: "decidir", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
-      plan: { n: "16", c: "14", nota: "Plan exacto de Tamaño Muestral (estándar 95 %, umbral 75 %, α 5 %, β 20 %)." } } },
+      plan: { n: "16", c: "14", nota: "Plan exacto de Tamaño Muestral (estándar 95 %, umbral 75 %, α 5 %, β 20 %)." },
+      resultados: [R("2026-T1", "15", "16"), R("2026-T2", "13", "16", "Rojo: faltaba la escala en los ingresos del fin de semana. Se recordó en el cambio de turno."), R("2026-T3", "16", "16")] } },
     { titulo: "Conciliación de la medicación al ingreso", sub: "Proceso · porcentaje · estimar", ind: {
       subproceso: "Ingreso en hospitalización", hallazgo: "No se concilia la medicación habitual de los pacientes polimedicados al ingreso", g: "8", o: "6", d: "6",
       criterio: "Se realiza y documenta la conciliación de la medicación en las primeras 24 horas tras el ingreso",
@@ -128,7 +131,8 @@
       terminos: "«Conciliación documentada»: consta la lista de medicación habitual y, para cada fármaco, si se mantiene, se suspende o se cambia. «Polimedicado»: 5 o más fármacos crónicos.",
       observaciones: "Minicaso del tema 3. Se acompaña de un indicador de resultado (eventos adversos por omisiones o duplicidades).",
       calidad: cal({}), objetivo: "estimar", muestra: { conf: "95", e: "10", p: "", N: "400", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
-      plan: { n: "78", c: "", nota: "Estimar con ±10 % y 95 % de confianza en un universo de 400 historias." } } },
+      plan: { n: "78", c: "", nota: "Estimar con ±10 % y 95 % de confianza en un universo de 400 historias." },
+      resultados: [R("2026-S1", "64", "78", "Dato de una muestra: mira la horquilla en Tamaño Muestral antes de concluir.")] } },
     { titulo: "Eventos adversos por omisiones o duplicidades", sub: "Resultado · número absoluto", ind: {
       subproceso: "Ingreso en hospitalización", hallazgo: "No se concilia la medicación habitual de los pacientes polimedicados al ingreso", g: "8", o: "6", d: "6",
       criterio: "No se producen eventos adversos por omisiones o duplicidades de medicación",
@@ -151,7 +155,8 @@
       terminos: "«Cumple Ottawa»: consta en la historia al menos uno de los criterios de Ottawa (dolor en maléolo con hipersensibilidad ósea o incapacidad para apoyar).",
       observaciones: "Ejemplo resuelto de la parte teórica de la unidad temática. Las tablas de Lemeshow dan 33/26, pero su β real es mayor que el 20 %: el plan exacto es 40/33.",
       calidad: cal({}), objetivo: "decidir", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
-      plan: { n: "40", c: "33", nota: "Plan exacto de Tamaño Muestral (90 % / 75 %, α 5 %, β 20 %)." } } },
+      plan: { n: "40", c: "33", nota: "Plan exacto de Tamaño Muestral (90 % / 75 %, α 5 %, β 20 %)." },
+      resultados: [R("2026-S1", "35", "40")] } },
     { titulo: "Registro del dolor", sub: "Proceso · porcentaje · LQAS", ind: {
       subproceso: "Atención en urgencias", hallazgo: "No se registra la intensidad del dolor", g: "", o: "", d: "",
       criterio: "Se registra la intensidad del dolor (escala numérica de 0 a 10) en la primera valoración",
@@ -185,7 +190,8 @@
       fuentes: ["Notificación de incidentes", "Sistema de información"], sentido: "menos", estandar: "1", umbral: "", periodicidad: "Trimestral", responsable: "Comisión de Seguridad del Paciente",
       terminos: "«Caída con daño»: cualquier lesión, aunque sea leve, que conste en la notificación o en la historia. «Estancia»: cada día de ingreso (dato del sistema de información).",
       observaciones: "Estándar orientativo inventado para el ejemplo: compárate con tu propia serie y con unidades parecidas.",
-      calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "Se cuentan todas las caídas notificadas y todas las estancias." } } },
+      calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "Se cuentan todas las caídas notificadas y todas las estancias." },
+      resultados: [R("2026-T1", "3", "2.950"), R("2026-T2", "2", "3.100", "Se añadió la valoración del riesgo de caídas al ingreso."), R("2026-T3", "1", "3.000")] } },
     { titulo: "Esperas de más de 30 minutos", sub: "Proceso · de media a porcentaje", ind: {
       subproceso: "Atención en urgencias", hallazgo: "Demora hasta la primera atención", g: "", o: "", d: "",
       criterio: "Los pacientes reciben la primera atención en menos de 30 minutos",
@@ -196,7 +202,8 @@
       fuentes: ["Sistema de información"], sentido: "menos", estandar: "10", umbral: "", periodicidad: "Mensual", responsable: "Coordinación de urgencias",
       terminos: "«Llegada»: hora de registro en admisión. «Primera atención»: hora de la primera valoración que consta en el sistema.",
       observaciones: "Antes se usaba el tiempo medio de espera (20 minutos), que escondía pacientes de tres horas. Como porcentaje se ve cuántos quedan fuera del límite.",
-      calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "El sistema de información da todos los casos: no hace falta muestra." } } },
+      calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "El sistema de información da todos los casos: no hace falta muestra." },
+      resultados: [R("Jul 2026", "312", "2.480"), R("Ago 2026", "270", "2.390"), R("Sep 2026", "230", "2.510", "Segundo profesional en admisión en las horas punta.")] } },
     { titulo: "Dispensadores de solución hidroalcohólica", sub: "Estructura · porcentaje", ind: {
       subproceso: "Higiene de manos", hallazgo: "Falta de solución hidroalcohólica en el punto de atención", g: "6", o: "5", d: "3",
       criterio: "Cada punto de atención dispone de solución hidroalcohólica con producto",
@@ -207,7 +214,8 @@
       fuentes: ["Observación directa"], sentido: "mas", estandar: "100", umbral: "", periodicidad: "Mensual", responsable: "Supervisión de la unidad",
       terminos: "«Operativo»: tiene producto y dispensa al accionarlo. «Punto de atención»: lugar donde se atiende al paciente, a menos de un brazo.",
       observaciones: "Recorrido mensual con una hoja de observación.",
-      calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "Se recorren todos los puntos de atención." } } }
+      calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "Se recorren todos los puntos de atención." },
+      resultados: [R("Jul 2026", "46", "50"), R("Ago 2026", "49", "50"), R("Sep 2026", "50", "50")] } }
   ];
   const EJEMPLO_COMPUESTO = { nombre: "Atención al infarto de miocardio", pacientes: "15", estandar: "", conclusion: "", rows: [
     { nom: "Aspirina en las primeras 24 h", cum: "10", opo: "12", ind: "" }, { nom: "β-bloqueantes en las primeras 24 h", cum: "4", opo: "6", ind: "" },
@@ -536,7 +544,18 @@
       <section class="ficha-sec"><h3>5 · Medición y muestra</h3><table class="ficha-t">
         ${fila("Plan", esc(L.textoPlan(ind)), 5)}
       </table></section>
+      ${fichaResultadosHtml(ind, o)}
     </article>`;
+  }
+  function fichaResultadosHtml(ind, o = {}) {
+    const an = L.analizarResultados(ind), tabla = tablaResultadosHtml(ind, an);
+    if (!tabla) return o.soloLectura ? "" : `<section class="ficha-sec no-print"><h3>6 · Resultados (Verificar)</h3><p class="field-sub">Aún no hay resultados. <a href="#/indicador/${ind.id}/resultados">Registrar el primer periodo</a></p></section>`;
+    return `<section class="ficha-sec ficha-res"><h3>6 · Resultados (Verificar)</h3>
+      ${graficoResultados(ind, an)}${tabla}
+      ${an.frases.length ? `<ul class="res-frases">${an.frases.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
+      ${L.esLqas(ind) ? `<p class="field-sub">LQAS: regla de ${esc(ind.plan.c)} correctos de ${esc(ind.plan.n)}. El porcentaje de la muestra no es una medida del cumplimiento.</p>` : ""}
+      ${o.soloLectura ? "" : `<p class="no-print"><a href="#/indicador/${ind.id}/resultados">Añadir o cambiar resultados</a></p>`}
+    </section>`;
   }
   function paso6(ind) {
     const A = L.avisos(ind).filter(a => a.nivel !== "nota");
@@ -544,6 +563,7 @@
     return `
       <div class="toolbar no-print">
         <button class="btn btn--primary" data-act="informe">Ver informe</button>
+        <a class="btn" href="#/indicador/${ind.id}/resultados">Resultados</a>
         <button class="btn" data-act="imprimir">Guardar / imprimir</button>
         <button class="btn" data-act="enlace">Compartir enlace</button>
         <button class="btn" data-act="duplicar">Duplicar</button>
@@ -554,6 +574,117 @@
       ${informeCab("Ficha del indicador")}
       ${fichaHtml(ind)}
       ${informePie()}`;
+  }
+
+  // ---------- Fase 2 · Resultados por periodo (Verificar del PDCA) ----------
+  const ESTADO_TXT = (ind, f) => f.error ? "Revisar" : f.vacio ? "Sin datos" : L.esLqas(ind)
+    ? { verde: "Verde", rojo: "Rojo", gris: "Pendiente" }[f.estado] : { verde: "Cumple", rojo: "No cumple", gris: "Sin valorar" }[f.estado];
+  const recorta = (t, n) => t.length > n ? t.slice(0, n - 1) + "…" : t;
+  // Gráfico SVG sin librerías: línea con la raya del estándar o, en LQAS, una tira de semáforos
+  function graficoResultados(ind, an) {
+    const pts = an.filas.filter(f => !f.vacio && !f.error && f.valor !== null);
+    if (!pts.length) return "";
+    const W = 400, H = 210, ml = 44, mr = 14, mt = 16, mb = 38, iw = W - ml - mr, ih = H - mt - mb;
+    const x = k => pts.length === 1 ? ml + iw / 2 : ml + k * iw / (pts.length - 1);
+    const cada = Math.ceil(pts.length / 7);
+    const ancla = k => pts.length === 1 ? "middle" : k === 0 ? "start" : k === pts.length - 1 ? "end" : "middle";
+    const etiquetas = pts.map((f, k) => k % cada === 0 || k === pts.length - 1 ? `<text class="gr-txt" x="${x(k) + (ancla(k) === "start" ? -6 : ancla(k) === "end" ? 6 : 0)}" y="${H - mb + 16}" text-anchor="${ancla(k)}">${esc(recorta(f.periodo, 10))}</text>` : "").join("");
+    const titulo = `Resultados de «${esc(ind.nombre || "indicador")}» por periodo`;
+    if (L.esLqas(ind)) {
+      const y = mt + 40;
+      return `<svg class="grafico" viewBox="0 0 ${W} ${mt + 100}" role="img" aria-label="${titulo}"><title>${titulo}</title>
+        <line class="gr-eje" x1="${ml - 20}" x2="${W - mr + 6}" y1="${y}" y2="${y}" />
+        ${pts.map((f, k) => `<circle class="gr-p gr-p--${f.estado}" cx="${x(k)}" cy="${y}" r="13" /><text class="gr-sem" x="${x(k)}" y="${y + 4.5}" text-anchor="middle">${f.estado === "verde" ? "V" : f.estado === "rojo" ? "R" : "?"}</text>`).join("")}
+        ${pts.map((f, k) => k % cada === 0 || k === pts.length - 1 ? `<text class="gr-txt" x="${x(k) + (ancla(k) === "start" ? -13 : ancla(k) === "end" ? 13 : 0)}" y="${y + 34}" text-anchor="${ancla(k)}">${esc(recorta(f.periodo, 10))}</text>` : "").join("")}
+        <text class="gr-txt" x="${ml - 20}" y="${mt}">LQAS · regla ${esc(ind.plan.c)} de ${esc(ind.plan.n)} correctos</text>
+      </svg>`;
+    }
+    const est = L.num(ind.estandar), esPct = ["porcentaje", "compuesto"].includes(ind.calculo) || L.unidad(ind) === "%";
+    const ej = L.ejeY(pts.map(f => f.valor), ind.calculo === "centinela" ? 0 : est, esPct);
+    const y = v => mt + ih - (v - ej.min) / (ej.max - ej.min) * ih;
+    const fmt = v => nf(v, 2);
+    const marcas = ej.marcas.map(m => `<line class="gr-rej" x1="${ml}" x2="${W - mr}" y1="${y(m)}" y2="${y(m)}" /><text class="gr-txt" x="${ml - 6}" y="${y(m) + 3.5}" text-anchor="end">${fmt(m)}</text>`).join("");
+    const linEst = est !== null && !Number.isNaN(est) && est >= ej.min && est <= ej.max
+      ? `<line class="gr-est" x1="${ml}" x2="${W - mr}" y1="${y(est)}" y2="${y(est)}" /><text class="gr-est-t" x="${W - mr}" y="${y(est) - 5}" text-anchor="end">Estándar ${ind.sentido === "menos" ? "≤" : ind.sentido === "mas" ? "≥" : ""} ${nf(est, 2)}${L.unidad(ind) === "%" ? " %" : ""}</text>` : "";
+    const camino = pts.map((f, k) => `${k ? "L" : "M"}${x(k).toFixed(1)},${y(f.valor).toFixed(1)}`).join(" ");
+    return `<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="${titulo}"><title>${titulo}</title>
+      ${marcas}${linEst}
+      ${pts.length > 1 ? `<path class="gr-linea" d="${camino}" />` : ""}
+      ${pts.map((f, k) => `<circle class="gr-p gr-p--${f.estado}" cx="${x(k).toFixed(1)}" cy="${y(f.valor).toFixed(1)}" r="5.5"><title>${esc(f.periodo)}: ${esc(L.textoValor(ind, f.valor))}</title></circle>`).join("")}
+      ${etiquetas}
+    </svg>`;
+  }
+  function graficoCardHtml(ind) {
+    const an = L.analizarResultados(ind), g = graficoResultados(ind, an);
+    if (!g) return `<div class="placeholder-box">Cuando escribas el primer periodo aparecerá aquí el gráfico con la línea del estándar.</div>`;
+    return `<div class="chart-card"><h3>${L.esLqas(ind) ? "Semáforo de cada periodo" : "Evolución frente al estándar"}</h3>${g}
+      ${L.esLqas(ind) ? `<p>V = verde (sin evidencia de problema) · R = rojo (hay que investigar). LQAS decide; no mide: por eso no se dibuja una línea de porcentajes.</p>` : `<p>La raya discontinua es el estándar. Verde: cumple; rojo: no cumple.</p>`}</div>
+      ${an.frases.length ? `<div class="res-resumen"><span class="box-tag">Qué dice la serie</span><ul>${an.frases.map(t => `<li>${esc(t)}</li>`).join("")}</ul></div>` : ""}`;
+  }
+  // Tabla de solo lectura (ficha, informe y cuadro)
+  function tablaResultadosHtml(ind, an) {
+    const filas = an.filas.filter(f => !f.vacio);
+    if (!filas.length) return "";
+    return `<div class="table-wrap"><table class="mini res-t"><thead><tr><th>Periodo</th><th>Datos</th><th>Valor</th><th>Resultado</th><th>Nota</th></tr></thead><tbody>
+      ${filas.map(f => { const m = ind.resultados[f.i]; const datosTxt = [m.num, m.den || (f.lqas ? String(f.lqas.rev) : "")].filter(lleno).join(" / ");
+        return `<tr><td>${esc(f.periodo)}</td><td>${esc(datosTxt)}</td><td>${esc(L.textoResultado(ind, f))}</td><td><span class="res-est res-est--${f.error ? "error" : f.estado}"><span class="punto"></span>${ESTADO_TXT(ind, f)}</span></td><td>${escMl(m.nota)}</td></tr>`; }).join("")}
+    </tbody></table></div>`;
+  }
+  // Resultado en vivo de una fila del editor
+  function filaOutHtml(ind, m, i) {
+    const f = L.evaluarMedicion(ind, m);
+    if (f.vacio) return "";
+    if (f.error) return `<div class="res-out res-out--error">✕ ${esc(f.error)}</div>`;
+    const url = L.enlaceAnalisis(ind, m);
+    const nota = L.esLqas(ind)
+      ? `<span class="res-mini">No escribas «el cumplimiento es del ${nf(f.valor, 0)} %»: con ${f.lqas.rev} casos LQAS decide, no mide.</span>`
+      : L.conMuestra(ind) ? `<span class="res-mini">Dato de una muestra: tiene margen de error.</span>` : "";
+    return `<div class="res-out res-out--${f.estado}"><span class="punto"></span><div>${L.esLqas(ind) ? `<b>${ESTADO_TXT(ind, f)}</b>` : `<b>${esc(L.textoValor(ind, f.valor))}</b> · ${ESTADO_TXT(ind, f)}`}${/^(No c|C)umple el estándar\.$/.test(f.motivo) ? "" : `<span class="res-mini">${esc(f.motivo)}</span>`}${nota}
+      ${url ? `<a class="res-tm" href="${url}" target="_blank" rel="noopener">${L.esLqas(ind) ? "Frase para el informe en Tamaño Muestral ↗" : "Ver la horquilla en Tamaño Muestral ↗"}</a>` : ""}</div></div>`;
+  }
+  function filaEditorHtml(ind, m, i) {
+    const C = L.camposMedicion(ind), plan = ind.plan || {};
+    const inp = (k, lab, ph, modo) => `<label>${lab}<input class="txt-in" data-k="resultados.${i}.${k}" value="${esc(m[k])}" placeholder="${esc(ph || "")}" inputmode="${modo || "decimal"}" autocomplete="off" /></label>`;
+    return `<div class="res-row">
+      <div class="res-row-head"><input class="res-per txt-in" data-k="resultados.${i}.periodo" value="${esc(m.periodo)}" placeholder="${esc(L.ejemploPeriodo(ind.periodicidad))}" aria-label="Periodo" autocomplete="off" />
+        <button class="icon-btn" data-act="res-del" data-i="${i}" aria-label="Quitar este periodo">✕</button></div>
+      <div class="res-nums">${C.num ? inp("num", C.num, "", "numeric") : ""}${C.den ? inp("den", C.den, L.esLqas(ind) ? plan.n || "" : "", "numeric") : ""}${C.valor ? inp("valor", C.valor, C.valorOblig ? "" : "opc.") : ""}</div>
+      <input class="txt-in res-nota" data-k="resultados.${i}.nota" value="${esc(m.nota)}" placeholder="Nota (opcional): incidencias, qué se cambió…" aria-label="Nota" autocomplete="off" />
+      <div data-zona="resfila" data-i="${i}" aria-live="polite">${filaOutHtml(ind, m, i)}</div>
+    </div>`;
+  }
+  function renderResultados(ind) {
+    actual = ind; pasoActual = 7; nAyuda = 0;
+    if (!Array.isArray(ind.resultados)) ind.resultados = [];
+    const plan = ind.plan || {}, lqas = L.esLqas(ind);
+    const falta = !ind.calculo ? "Elige la forma de cálculo en el paso 2." : ind.calculo !== "centinela" && (!ind.sentido || !lleno(ind.estandar)) ? "Sin sentido (≥ / ≤) y estándar (paso 3) no se puede saber si cada periodo cumple." : lqas && (!lleno(plan.n) || !lleno(plan.c)) ? "Anota n y c del plan LQAS (paso 5) para aplicar la regla." : "";
+    view.innerHTML = `
+      <div class="wiz-top no-print">
+        <a class="volver-cuadro" href="#/cuadro">← Mi cuadro</a>
+        ${stepperHtml(ind, 7)}
+      </div>
+      <div class="wiz-titulo"><span class="wiz-paso">Verificar (PDCA)</span><h1 class="page-title">Resultados por periodo</h1></div>
+      <p class="page-lead"><b>${lleno(ind.nombre) ? esc(ind.nombre) : "Indicador sin nombre"}</b>${ind.calculo ? ` · <span class="formula-mini">${esc(L.formula(ind))}</span>` : ""}${lleno(ind.estandar) ? ` · estándar <b>${esc(L.textoEstandar(ind))}</b>` : ""}${lqas && lleno(plan.n) ? ` · LQAS n = ${esc(plan.n)}, c = ${esc(plan.c)}` : ""}</p>
+      ${falta ? `<div class="warn">⚠ ${esc(falta)} <a href="#/indicador/${ind.id}/${!ind.calculo ? 2 : falta.includes("paso 5") ? 5 : 3}">Completar</a></div>` : ""}
+      ${idea("Medir no basta: en la fase <b>Verificar</b> se compara cada periodo con el estándar. Si sale rojo, toca <b>Actuar</b>: analizar causas, mejorar y volver a medir.")}
+      ${facil(`<ul>
+        <li>Escribe <b>un periodo por fila</b>, en orden (el más antiguo arriba), con la misma periodicidad que en la ficha (${esc(ind.periodicidad || "sin indicar")}).</li>
+        <li>${lqas ? `Es un indicador <b>LQAS</b>: escribe el numerador y cuántos casos revisaste. La app aplica la regla que anotaste (verde si hay al menos ${esc(plan.c || "c")} correctos de ${esc(plan.n || "n")}). No da un porcentaje fiable: para la frase del informe, abre «Ya tengo los resultados» en Tamaño Muestral.` : ind.calculo === "centinela" ? "Es un <b>centinela</b>: cualquier caso sale en rojo y se analiza uno a uno." : "Escribe el numerador y el denominador; si ya tienes el valor calculado (p. ej. del sistema de información), puedes escribir solo el valor."}</li>
+        <li>Un periodo malo puede ser casualidad; <b>dos o más seguidos</b> son una señal clara. Con menos de tres periodos todavía no hay tendencia.</li>
+        ${L.conMuestra(ind) && !lqas ? "<li>Si mides con una <b>muestra</b>, el dato tiene margen de error: mira la horquilla en Tamaño Muestral antes de decir que «ha bajado» o «ha subido».</li>" : ""}
+      </ul>`)}
+      <div class="calc-grid">
+        <div class="card no-print">
+          <h2 class="sub-h">Mediciones</h2>
+          ${ind.resultados.length ? ind.resultados.map((m, i) => filaEditorHtml(ind, m, i)).join("") : `<p class="field-sub">Todavía no hay ningún periodo.</p>`}
+          <div class="toolbar"><button class="btn btn--primary" data-act="res-add">+ Añadir periodo</button></div>
+        </div>
+        <div class="calc-result-col" data-zona="resgraf">${graficoCardHtml(ind)}</div>
+      </div>
+      <div class="toolbar no-print">
+        <a class="btn" href="#/indicador/${ind.id}/6">Ver la ficha</a>
+        <button class="btn" data-act="imprimir">Guardar / imprimir</button>
+      </div>`;
   }
 
   // ---------- Informe (cabecera y pie, solo al imprimir / Ver informe) ----------
@@ -592,7 +723,7 @@
           ${RENDER_PASO[paso](ind)}
           <div class="wiz-nav no-print">
             ${paso > 1 ? `<a class="btn" href="#/indicador/${ind.id}/${paso - 1}">← Anterior</a>` : `<span></span>`}
-            ${paso < 6 ? `<a class="btn btn--primary" href="#/indicador/${ind.id}/${paso + 1}">Siguiente: ${PASOS[paso].corto} →</a>` : `<a class="btn btn--primary" href="#/cuadro">Ir a mi cuadro →</a>`}
+            ${paso < 6 ? `<a class="btn btn--primary" href="#/indicador/${ind.id}/${paso + 1}">Siguiente: ${PASOS[paso].corto} →</a>` : `<a class="btn btn--primary" href="#/indicador/${ind.id}/resultados">Registrar resultados →</a>`}
           </div>
         </div>
         ${paso < 6 ? `<aside class="wiz-side no-print" data-zona="resumen">${resumenHtml(ind)}</aside>` : ""}
@@ -609,9 +740,11 @@
       estandar: () => estandarHtml(ind),
       resumen: () => resumenHtml(ind),
       semaforo: () => semaforoCalHtml(ind),
-      piloto: () => pilotoHtml(L.acuerdoPiloto(ind.piloto))
+      piloto: () => pilotoHtml(L.acuerdoPiloto(ind.piloto)),
+      resfila: el => filaOutHtml(ind, ind.resultados[Number(el.dataset.i)] || {}, Number(el.dataset.i)),
+      resgraf: () => graficoCardHtml(ind)
     };
-    $$("[data-zona]").forEach(el => { const f = Z[el.dataset.zona]; if (f) el.innerHTML = f(); });
+    $$("[data-zona]").forEach(el => { const f = Z[el.dataset.zona]; if (f) el.innerHTML = f(el); });
     const links = L.enlacesTM(ind);
     $$("[data-zona-href]").forEach(a => { const h = links[a.dataset.zonaHref]; if (h) a.href = h; });
     const st = $(".wiz-steps"); if (st) st.outerHTML = stepperHtml(ind, pasoActual);
@@ -631,7 +764,7 @@
       </section>
       <h2 class="sec-t">El camino en seis pasos</h2>
       <ol class="ruta">
-        ${[["Riesgo", "Del hallazgo del Mapa de Riesgos al criterio y al indicador."], ["Tipo", "¿Qué mide? ¿Cómo se calcula? (ejercicio 5A)"], ["Definición", "Numerador, denominador, fuente, estándar… (ejercicio 5B)"], ["Calidad", "SMART, válido, fiable y útil. Pilotaje con dos auditoras."], ["Muestra", "Estimar o decidir, con Tamaño Muestral."], ["Ficha", "Lista para imprimir, compartir o pasar a Excel."]].map(([t, s], i) => `<li class="ruta-p"><span class="ruta-n">${i + 1}</span><div><b>${t}</b><span>${s}</span></div></li>`).join("")}
+        ${[["Riesgo", "Del hallazgo del Mapa de Riesgos al criterio y al indicador."], ["Tipo", "¿Qué mide? ¿Cómo se calcula? (ejercicio 5A)"], ["Definición", "Numerador, denominador, fuente, estándar… (ejercicio 5B)"], ["Calidad", "SMART, válido, fiable y útil. Pilotaje con dos auditoras."], ["Muestra", "Estimar o decidir, con Tamaño Muestral."], ["Ficha", "Lista para imprimir, compartir o pasar a Excel. Después, <b>registra los resultados</b> de cada periodo frente al estándar (Verificar)."]].map(([t, s], i) => `<li class="ruta-p"><span class="ruta-n">${i + 1}</span><div><b>${t}</b><span>${s}</span></div></li>`).join("")}
       </ol>
       <div class="guide">
         <a class="guide-card" href="#/compuesto/nuevo"><span class="guide-num">Σ</span><div><div class="guide-q">Indicador compuesto</div><div class="guide-a">Varios criterios en un número, <b>sin perder el desglose</b> (ejercicio 5C).</div></div><span class="guide-go">›</span></a>
@@ -707,14 +840,16 @@
   function tarjetaInd(ind) {
     const t = L.TIPOS[ind.tipo], c = L.CALCULOS[ind.calculo], ipr = L.ipr(ind.g, ind.o, ind.d), e = L.estadoCalidad(ind);
     const meta = [L.textoEstandar(ind), ind.periodicidad, ind.responsable].filter(lleno).map(esc).join(" · ");
+    const ult = L.analizarResultados(ind).ultima;
     return `<div class="ind-card">
       <a class="ind-link" href="#/indicador/${ind.id}/${L.pasosCompletos(ind)[3] ? 6 : 1}">
         <div class="badges">${t ? `<span class="badge badge--${ind.tipo}">${t.letra}</span>` : ""}${c ? `<span class="badge">${c.nom}</span>` : ""}${ipr ? `<span class="badge badge--ipr">IPR ${ipr}</span>` : ""}<span class="badge badge--sem badge--${e.color}"><span class="punto"></span>${e.texto}</span></div>
         <b class="ind-nombre">${lleno(ind.nombre) ? esc(ind.nombre) : '<span class="vacio">Sin nombre</span>'}</b>
         ${lleno(ind.subproceso) || lleno(ind.hallazgo) ? `<span class="ind-sub">${esc([ind.subproceso, ind.hallazgo].filter(lleno).join(" · "))}</span>` : ""}
         ${meta ? `<span class="ind-meta">${meta}</span>` : ""}
+        ${ult ? `<span class="res-est res-est--${ult.estado}"><span class="punto"></span>${esc(ult.periodo)}: ${esc(L.textoResultado(ind, ult))} · ${ESTADO_TXT(ind, ult)}</span>` : ""}
       </a>
-      <div class="ind-pie">${puntosProgreso(ind)}<span class="ind-acc"><a href="#/indicador/${ind.id}/6">Ficha</a><button class="link-btn" data-act="duplicar" data-id="${ind.id}">Duplicar</button><button class="link-btn link-btn--peligro" data-act="borrar" data-id="${ind.id}">Borrar</button></span></div>
+      <div class="ind-pie">${puntosProgreso(ind)}<span class="ind-acc"><a href="#/indicador/${ind.id}/6">Ficha</a><a href="#/indicador/${ind.id}/resultados">Resultados</a><button class="link-btn" data-act="duplicar" data-id="${ind.id}">Duplicar</button><button class="link-btn link-btn--peligro" data-act="borrar" data-id="${ind.id}">Borrar</button></span></div>
     </div>`;
   }
   function tarjetaCmp(c) {
@@ -728,12 +863,16 @@
       <div class="ind-pie"><span></span><span class="ind-acc"><button class="link-btn link-btn--peligro" data-act="borrar-cmp" data-id="${c.id}">Borrar</button></span></div>
     </div>`;
   }
+  function ultimoTxt(ind) {
+    const u = L.analizarResultados(ind).ultima;
+    return u ? `<span class="res-est res-est--${u.estado}"><span class="punto"></span>${ESTADO_TXT(ind, u)}</span><br>${esc(u.periodo)}: ${esc(L.textoResultado(ind, u))}` : "—";
+  }
   function renderCuadroInforme() {
     const lista = ordenar(datos.indicadores);
     view.innerHTML = `${informeBar()}${informeCab("Cuadro de indicadores")}
       <div class="table-wrap"><table class="cuadro-t">
-        <thead><tr><th>Nº</th><th>Indicador</th><th>Tipo · cálculo</th><th>Fórmula</th><th>Estándar</th><th>Fuente</th><th>Periodicidad · responsable</th><th>Plan</th></tr></thead>
-        <tbody>${lista.map((i, k) => `<tr><td>${k + 1}</td><td><b>${esc(i.nombre)}</b>${lleno(i.hallazgo) ? `<br><span class="gris">${esc(i.subproceso)}${lleno(i.subproceso) ? " · " : ""}${esc(i.hallazgo)}${L.ipr(i.g, i.o, i.d) ? ` (IPR ${L.ipr(i.g, i.o, i.d)})` : ""}</span>` : ""}</td><td>${L.TIPOS[i.tipo] ? L.TIPOS[i.tipo].nom : "—"}<br><span class="gris">${L.CALCULOS[i.calculo] ? L.CALCULOS[i.calculo].nom : ""}</span></td><td>${esc(L.formula(i))}</td><td>${esc(L.textoEstandar(i))}</td><td>${esc(L.fuentesTexto(i))}</td><td>${esc(i.periodicidad)}<br><span class="gris">${esc(i.responsable)}</span></td><td>${esc(L.textoPlan(i))}</td></tr>`).join("")}</tbody>
+        <thead><tr><th>Nº</th><th>Indicador</th><th>Tipo · cálculo</th><th>Fórmula</th><th>Estándar</th><th>Fuente</th><th>Periodicidad · responsable</th><th>Plan</th><th>Último resultado</th></tr></thead>
+        <tbody>${lista.map((i, k) => `<tr><td>${k + 1}</td><td><b>${esc(i.nombre)}</b>${lleno(i.hallazgo) ? `<br><span class="gris">${esc(i.subproceso)}${lleno(i.subproceso) ? " · " : ""}${esc(i.hallazgo)}${L.ipr(i.g, i.o, i.d) ? ` (IPR ${L.ipr(i.g, i.o, i.d)})` : ""}</span>` : ""}</td><td>${L.TIPOS[i.tipo] ? L.TIPOS[i.tipo].nom : "—"}<br><span class="gris">${L.CALCULOS[i.calculo] ? L.CALCULOS[i.calculo].nom : ""}</span></td><td>${esc(L.formula(i))}</td><td>${esc(L.textoEstandar(i))}</td><td>${esc(L.fuentesTexto(i))}</td><td>${esc(i.periodicidad)}<br><span class="gris">${esc(i.responsable)}</span></td><td>${esc(L.textoPlan(i))}</td><td>${ultimoTxt(i)}</td></tr>`).join("")}</tbody>
       </table></div>
       ${datos.compuestos.map(c => { const r = L.calcCompuesto(c.rows); return `<h2 class="sec-t">${esc(c.nombre || "Compuesto")}</h2>${r.valido ? desgloseTabla(r) + `<p class="an-frase-p">${esc(lleno(c.conclusion) ? c.conclusion : L.fraseCompuesto(c.nombre, r))}</p>` : "<p>Sin datos completos.</p>"}`; }).join("")}
       ${informePie()}`;
@@ -851,7 +990,7 @@
       <details class="facil"><summary>4 · Un buen indicador: SMART, válido, fiable, útil</summary><div class="facil-body"><ul><li><b>Específico</b>: aspecto concreto y bien definido.</li><li><b>Medible</b>: cuantificable de forma objetiva.</li><li><b>Alcanzable</b>: viable con los recursos disponibles.</li><li><b>Relevante</b>: alineado con los objetivos clave.</li><li><b>Temporal</b>: periodicidad definida.</li></ul><p>Y tres preguntas más: <b>¿válido?</b> (mide lo que dice medir), <b>¿fiable?</b> (dos auditoras llegan a lo mismo) y <b>¿útil?</b> (alguien puede actuar). También debe ser <b>comparable</b> en el tiempo y entre unidades.</p>${trampa("Si un auditor marca «cumple» y otro «no cumple» en la misma historia, el problema está en el indicador. Pilótalo con dos personas antes de lanzarlo.")}</div></details>
       <details class="facil"><summary>5 · Seleccionar y definir</summary><div class="facil-body"><ol><li>Identificar áreas clave: Mapa de Riesgos, auditorías anteriores, objetivos de la unidad.</li><li>Elegir solo los que aporten información para decidir: ¿qué queremos saber? ¿qué decisión tomaremos?</li><li>Definir cada uno con precisión: nombre, fórmula, unidad, periodicidad, fuente, responsable y objetivo de referencia.</li><li>Verificar la viabilidad: ¿hay datos?, ¿se registran de forma fiable?, ¿hay quien los interprete?</li></ol><p>No se trata de listas interminables, sino de <b>priorizar</b>.</p></div></details>
       <details class="facil"><summary>6 · Indicadores compuestos</summary><div class="facil-body"><div class="formula">Compuesto (%) = Σ cumplimientos ÷ Σ oportunidades × 100</div>${ejemplo("infarto de miocardio", "<p>15 pacientes, 6 criterios, 40 oportunidades, 28 cumplidas → <b>70 %</b>. Pero el consejo antitabaco está en el 33 % y los β-bloqueantes al alta en el 50 %. La media de los seis porcentajes daría 63,9 %.</p>")}<p><b>Regla de oro:</b> nunca presentes el compuesto sin su desglose. <a href="#/compuesto/nuevo">Abrir el módulo de compuestos</a>.</p></div></details>
-      <details class="facil"><summary>7 · Implantación, seguimiento y PDCA</summary><div class="facil-body"><ul><li><b>Planificar</b>: diseñar indicadores alineados con los riesgos.</li><li><b>Hacer</b>: recoger los datos (fuente y periodicidad claras).</li><li><b>Verificar</b>: analizar, comparar con el estándar, ver tendencias.</li><li><b>Actuar</b>: medidas de mejora y, si hace falta, ajustar el indicador.</li></ul><p>Los resultados se difunden de forma clara y orientada a la acción. Un indicador no es una carga burocrática: es una herramienta de mejora.</p></div></details>
+      <details class="facil"><summary>7 · Implantación, seguimiento y PDCA</summary><div class="facil-body"><ul><li><b>Planificar</b>: diseñar indicadores alineados con los riesgos.</li><li><b>Hacer</b>: recoger los datos (fuente y periodicidad claras).</li><li><b>Verificar</b>: analizar, comparar con el estándar, ver tendencias. En la app, desde la ficha: <b>Resultados</b> (un periodo por fila, semáforo y gráfico con la línea del estándar).</li><li><b>Actuar</b>: medidas de mejora y, si hace falta, ajustar el indicador.</li></ul><p>Los resultados se difunden de forma clara y orientada a la acción. Un indicador no es una carga burocrática: es una herramienta de mejora.</p></div></details>
       <details class="facil"><summary>8 · Estimar o decidir (y Tamaño Muestral)</summary><div class="facil-body"><p><b>Estimar</b> es la báscula de precisión: da un número con su margen de error, pero pide más historias (97 con ±10 %, 385 con ±5 %; menos si el universo es pequeño). <b>Decidir</b> es el arco del aeropuerto: el LQAS dice «hay o no hay problema» con 15–40 historias.</p><p>Esta app enlaza con <a href="${L.TM_URL}" target="_blank" rel="noopener">Tamaño Muestral ↗</a> para hacer esos cálculos con los datos de tu indicador.</p></div></details>`;
   }
 
@@ -1176,7 +1315,8 @@
     } else if (partes[0] === "indicador") {
       const ind = buscaInd(partes[1]) || borradores.get(partes[1]);
       const paso = Math.min(6, Math.max(1, parseInt(partes[2], 10) || 1));
-      if (ind) renderWizard(ind, informe ? 6 : paso); else { view.innerHTML = `<div class="error-box">No se encuentra ese indicador en este dispositivo.</div><p><a href="#/cuadro">Ir a mi cuadro</a></p>`; }
+      if (ind && partes[2] === "resultados" && !informe) renderResultados(ind);
+      else if (ind) renderWizard(ind, informe ? 6 : paso); else { view.innerHTML = `<div class="error-box">No se encuentra ese indicador en este dispositivo.</div><p><a href="#/cuadro">Ir a mi cuadro</a></p>`; }
       navR = buscaInd(partes[1]) ? "cuadro" : "nuevo";
     } else if (partes[0] === "compuesto") {
       let c = partes[1] === "nuevo" ? null : buscaCmp(partes[1]) || borradores.get(partes[1]);
@@ -1307,6 +1447,18 @@
     else if (a === "cmp-add") { cmpActual.rows.push({ nom: "", cum: "", opo: "", ind: "" }); tocado(cmpActual); renderCompuesto(cmpActual); const ins = $$(".cmp-nom"); ins[ins.length - 1].focus(); }
     else if (a === "cmp-del") { cmpActual.rows.splice(Number(b.dataset.i), 1); tocado(cmpActual); renderCompuesto(cmpActual); }
     else if (a === "cmp-ejemplo") { Object.assign(cmpActual, clon(EJEMPLO_COMPUESTO)); tocado(cmpActual); renderCompuesto(cmpActual); }
+    else if (a === "res-add" && actual) {
+      const prev = actual.resultados[actual.resultados.length - 1];
+      actual.resultados.push(L.nuevaMedicion(prev ? L.siguientePeriodo(prev.periodo) : ""));
+      tocado(actual); renderResultados(actual);
+      const ins = $$(".res-per"); const ultimo = ins[ins.length - 1];
+      if (ultimo) { ultimo.scrollIntoView({ block: "center" }); (ultimo.value ? $(".res-nums input", ultimo.closest(".res-row")) || ultimo : ultimo).focus(); }
+    }
+    else if (a === "res-del" && actual) {
+      const i = Number(b.dataset.i), m = actual.resultados[i]; if (!m) return;
+      const quitar = () => { actual.resultados.splice(i, 1); tocado(actual); const y = window.scrollY; renderResultados(actual); window.scrollTo(0, y); };
+      if ([m.num, m.den, m.valor, m.nota].some(lleno)) confirmar(`<p>Se quitará el periodo «${esc(m.periodo || "sin nombre")}» con sus datos.</p>`, "Quitar", quitar, { titulo: "Quitar periodo" }); else quitar();
+    }
     else if (a === "copia") copiaSeguridad();
     else if (a === "importar") $("#input-importar").click();
     else if (a === "excel") exportarExcel();

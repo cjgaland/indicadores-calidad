@@ -12,17 +12,18 @@ Autoría (idéntica en el pie de index.html, «Acerca de», el pie del informe e
 ## 2. Arquitectura
 - `index.html` — esqueleto, header, nav, modales (bienvenida, Acerca de, novedades, confirmar) e `<input type=file>` oculto para importar. Script inline que fija `data-tema` antes de pintar.
 - `styles.css` — base copiada de Tamaño Muestral (tokens, modales, «Ver informe») + componentes propios (asistente, tarjetas de opción, calidad, ficha, cuadro, compuesto) + `@media print`. Móvil primero (360 px); 2 columnas ≥ 900 px.
-- `logic.js` — funciones PURAS (sin DOM), `window.Logica` / `module.exports`: catálogos (`TIPOS`, `CALCULOS`, `CALIDAD`), modelo (`nuevoIndicador`, `nuevoCompuesto`), `ipr`, `sugerirNombre`, `sentidoSugerido`, `formula`, `unidad`, `textoEstandar`, `avisos` (trampas por paso), `pistasCalidad`, `estadoCalidad`, `acuerdoPiloto`, `pasosCompletos`, `recomendacionMuestra`, `lqasParams`, `enlacesTM`, `calcCompuesto`, `fraseCompuesto`, `sanearIndicador/Compuesto/Datos`, `fusionar`, `hojasExcel`.
+- `logic.js` — funciones PURAS (sin DOM), `window.Logica` / `module.exports`: catálogos (`TIPOS`, `CALCULOS`, `CALIDAD`), modelo (`nuevoIndicador`, `nuevoCompuesto`), `ipr`, `sugerirNombre`, `sentidoSugerido`, `formula`, `unidad`, `textoEstandar`, `avisos` (trampas por paso), `pistasCalidad`, `estadoCalidad`, `acuerdoPiloto`, `pasosCompletos`, `recomendacionMuestra`, `lqasParams`, `enlacesTM`, `calcCompuesto`, `fraseCompuesto`, `sanearIndicador/Compuesto/Datos`, `fusionar`, `hojasExcel`; fase 2: `evaluarMedicion`, `analizarResultados`, `textoValor`/`textoResultado`, `ejeY`, `siguientePeriodo`, `enlaceAnalisis`, `numMiles`.
 - `xlsx.js` — Excel real sin dependencias (ZIP STORE + OOXML), adaptado de la skill `app-xlsx-export` en un solo archivo; `window.Xlsx` / `module.exports`. Cambio respecto a la skill: solo la primera hoja lleva `tabSelected` (si todas lo llevan, Excel abre las hojas agrupadas).
 - `app.js` — UI: datos, enrutado, asistente, cuadro, compuesto, ficha/informe, aprende, glosario, quiz, PDF iOS, copia/importar/Excel, tema, modales, SW.
 - `sw.js` — network-first con caché de respaldo; sin `skipWaiting` al instalar (espera a «Actualizar»).
 - `tests/logic.test.mjs` — `node tests/logic.test.mjs` (lógica + Excel).
 
 ### Rutas (hash)
-`#/` inicio · `#/nuevo` (crea un borrador y redirige) · `#/indicador/<id>/<1-6>` asistente (6 = ficha) · `?informe=1` = vista de informe (ficha, `#/cuadro?informe=1`, `#/compuesto/<id>?informe=1`) · `#/cuadro` · `#/compuesto/nuevo` y `#/compuesto/<id>` · `#/ver?d=<JSON>` indicador compartido · `#/aprende` · `#/glosario` · `#/prueba`.
+`#/` inicio · `#/nuevo` (crea un borrador y redirige) · `#/indicador/<id>/<1-6>` asistente (6 = ficha) · `#/indicador/<id>/resultados` resultados por periodo · `?informe=1` = vista de informe (ficha, `#/cuadro?informe=1`, `#/compuesto/<id>?informe=1`) · `#/cuadro` · `#/compuesto/nuevo` y `#/compuesto/<id>` · `#/ver?d=<JSON>` indicador compartido · `#/aprende` · `#/glosario` · `#/prueba`.
 
 ### Datos
 - `localStorage["indicadores-datos"]` = `{ app, v, ultimaCopia, indicadores: [], compuestos: [] }`. Se guarda con 250 ms de retardo y al salir (`pagehide`).
+- Resultados (fase 2): `ind.resultados = [{ periodo, num, den, valor, nota }]` (máx. 200, en orden de entrada). `valor` solo si no hay num/den (dato ya calculado) o en la media. Recuentos con puntos de millar («2.950») con `numMiles`.
 - Al cargar se pasa siempre por `sanearDatos` (claves conocidas, enumerados válidos, textos ≤ 2000).
 - **Borradores**: «Nuevo indicador» / «Nuevo compuesto» crean el objeto en memoria (`borradores`) y solo se guarda en `datos` cuando se escribe algo (`esVacio`, `esVacioCmp`).
 - Campos con `data-k="ruta.anidada"` (p. ej. `muestra.e`, `calidad.E.t`, `rows.0.cum`) → `setPath`. Botones `data-pick` (excluyentes, repintan el paso conservando el scroll), `data-set` (chips rápidos), `data-multi` (fuentes). Al escribir, `refrescarZonas()` actualiza solo `[data-zona]` (IPR, avisos, fórmula, estándar, resumen, semáforo, piloto) y los `href` de `[data-zona-href]`, sin perder el foco.
@@ -41,7 +42,8 @@ Autoría (idéntica en el pie de index.html, «Acerca de», el pie del informe e
 - El compuesto sí se calcula aquí (es una suma): Σ cumplimientos ÷ Σ oportunidades, % por criterio, peso, punto débil, media de % solo para comparar, frase «titular + desglose» (editable). Avisos: el titular esconde al flojo (> 10 puntos por debajo), oportunidades ≠ pacientes, media ≠ compuesto.
 - Ejemplos SOLO de la parte teórica o inventados (NO de los ejercicios prácticos, que estropearían el solucionario): UPP 24 h (LQAS 95/75 → 16/14), conciliación al ingreso y eventos adversos (minicaso del tema 3; estimar N 400 ±10 % → 78), Ottawa (90/75 → 40/33), registro del dolor (85/60 → 22/16), cirugía en lugar equivocado (centinela), caídas por 1.000 estancias (tasa), esperas > 30 min (de media a %), dispensadores de solución hidroalcohólica (estructura), compuesto del infarto (28/40 = 70 %; media 63,9 %). Planes calculados con `stats.js` de Tamaño Muestral.
 - Evitar en ejemplos y quiz: triaje/constantes, sala de espera/reevaluación, pulsera en traslados, checklist quirúrgico, EPOC, valoración de caídas en ≥ 65 años, conciliación en urgencias (son de los ejercicios).
-- Excel: hojas «5A Caracterización», «5B Definición operativa» y, si hay, «5C Compuestos» (punto débil resaltado).
+- Excel: hojas «5A Caracterización», «5B Definición operativa», si hay, «5C Compuestos» (punto débil resaltado) y «Resultados» (semáforo coloreado).
+- **Resultados (fase 2, Verificar del PDCA)**, aprobado por el autor el 2026-10-19: pantalla aparte (desde la ficha y la tarjeta del cuadro), una fila por periodo con semáforo verde/rojo según el sentido (se compara el valor redondeado a los decimales que se muestran: 0 en centinela/absoluto, 2 en tasa/ratio, 1 en el resto); gris sin estándar. Centinela: cualquier caso = rojo. **LQAS**: solo se aplica la regla n/c del paso 5 (correctos = n − fallos si «menos es mejor»; decide antes de terminar como Tamaño Muestral) y se muestra «x de n correctos», nunca un % como dato; tira de semáforos en vez de línea. Con muestra (estimar): aviso de margen de error y enlace a «Ya tengo los resultados» de Tamaño Muestral (`an_rev`, `an_cum`, `an_est`, invertidos si es de fallos). Tendencia sin estadística: cumple en X de los últimos 4, racha de rojos, mejora/empeora respecto al anterior, aviso con < 3 periodos. Gráfico SVG propio (viewBox 400, colores por CSS para el modo oscuro). Ejemplos con mediciones inventadas.
 - Informe/impresión: «Ver informe» añade `?informe=1` (clase `body.ver-informe`); «Guardar / imprimir» en escritorio/Android va al informe y llama a `window.print()`; en iOS genera el PDF (`generarPDF` + `pdfDesdeJPEGs`, copiados de Tamaño Muestral) y abre Compartir.
 - Los `textarea.txt-in` crecen solos (`autoAlto` + MutationObserver).
 - «Explicado fácil» recuerda si se dejó abierto (`indicadores-facil-abierto`).
@@ -64,7 +66,7 @@ Carpeta `Backup/` (ignorada en git) con las 5 copias más recientes:
 - `PROMPT_NUEVA_SESION.md` no se publica (está en `.gitignore`).
 
 ## 8. Pendiente
-- Fase 2 (acordada): registrar resultados por periodo y ver la tendencia frente al estándar (fase «Verificar» del PDCA).
+- Fase 2 hecha en local (2026-10-19), pendiente de publicar: al publicar, entrada en `NOVEDADES` y `APP_VERSION` 2026.02.
 - Probar en un iPhone real el PDF y la copia de seguridad por Compartir, y la instalación como PWA.
 - Varios cuadros con nombre (la estructura de datos lo permitiría más adelante).
 - Manual de usuario (skill `app-user-manual`) cuando la app esté estable.

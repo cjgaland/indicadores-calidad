@@ -11,8 +11,13 @@
   // ---------- Versión y novedades ----------
   // Al publicar cambios: añadir una entrada AL PRINCIPIO de NOVEDADES, poner su versión en los ?v= de index.html, en
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
-  const APP_VERSION = "2026.01";
+  const APP_VERSION = "2026.02";
   const NOVEDADES = [
+    { version: "2026.02", fecha: "Octubre 2026", titulo: "Resultados por periodo (Verificar)", cambios: [
+      "Nueva pantalla «Resultados» en cada indicador: escribe un periodo por fila y verás si cumple el estándar (verde o rojo) según el sentido (≥ o ≤).",
+      "Gráfico de la evolución con la línea del estándar y un resumen de la serie: en cuántos periodos se cumple, rachas en rojo y si mejora o empeora.",
+      "En los indicadores LQAS se aplica la regla n/c del plan y se enlaza con «Ya tengo los resultados» de Tamaño Muestral para la frase del informe.",
+      "Los resultados salen en la ficha imprimible, en el cuadro, en el Excel (hoja «Resultados») y en la copia de seguridad. Los ejemplos traen mediciones inventadas."] },
     { version: "2026.01", fecha: "Octubre 2026", titulo: "Primera versión", cambios: [
       "Asistente en seis pasos para crear un indicador: del hallazgo del Mapa de Riesgos al indicador, caracterización (5A), definición operativa (5B), comprobación de su calidad (SMART, válido, fiable, útil), muestra y ficha.",
       "Avisos de las trampas del curso: centinela sin muestreo, la media que maquilla, el sentido invertido del estándar, términos sin definir…",

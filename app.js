@@ -16,7 +16,10 @@
     { version: "2026.03", fecha: "Octubre 2026", titulo: "Una app para todos", cambios: [
       "La app es ahora de uso general: se han quitado las referencias directas al curso de auditorías (que sigue citado entre las fuentes, en «Acerca de»).",
       "La portada se titula «Indicadores» y tiene un acceso directo a la app hermana Tamaño Muestral.",
-      "El Excel exportado nombra sus hojas «Caracterización», «Definición operativa», «Compuestos» y «Resultados»."] },
+      "El Excel exportado nombra sus hojas «Caracterización», «Definición operativa», «Compuestos» y «Resultados».",
+      "Nuevo «Cuadro de ejemplo» (menú «Ejemplos»), aparte de tus indicadores: 9 indicadores y un compuesto con resultados inventados para ver semáforos, gráficos y tendencia. No se guarda ni se mezcla con lo tuyo; «Copiar a mi cuadro» trae el que te sirva.",
+      "Si tu cuadro tenía copias de los ejemplos de versiones anteriores, un aviso te permite quitarlas.",
+      "Gráfico de resultados: las fechas ya no se montan cuando hay muchos periodos."] },
     { version: "2026.02", fecha: "Octubre 2026", titulo: "Resultados por periodo (Verificar)", cambios: [
       "Nueva pantalla «Resultados» en cada indicador: escribe un periodo por fila y verás si cumple el estándar (verde o rojo) según el sentido (≥ o ≤).",
       "Gráfico de la evolución con la línea del estándar y un resumen de la serie: en cuántos periodos se cumple, rachas en rojo y si mejora o empeora.",
@@ -56,11 +59,22 @@
       if (s) datos = { indicadores: s.indicadores, compuestos: s.compuestos, ultimaCopia: typeof o.ultimaCopia === "string" ? o.ultimaCopia : null };
     } catch (e) { /* datos dañados: se empieza de cero sin borrar lo guardado */ }
   })();
+  // Los datos del usuario son los únicos que se guardan. Los ejemplos viven aparte, en memoria
+  // («Cuadro de ejemplo», ids «ej-…»): se pueden tocar, pero ni se guardan ni se mezclan con los suyos.
+  const datosUsuario = datos;
+  let datosEjemplo = null, modoEjemplo = false;
+  const esIdEjemplo = id => /^ej-/.test(id || "");
+  function cuadroEjemplo() {
+    if (!datosEjemplo) datosEjemplo = { indicadores: EJEMPLOS.map((e, i) => indDesdeEjemplo(e, "ej-" + (i + 1))), compuestos: [Object.assign(L.nuevoCompuesto("ej-c1", hoy()), clon(EJEMPLO_COMPUESTO))], ultimaCopia: null };
+    return datosEjemplo;
+  }
+  const rutaCuadro = () => modoEjemplo ? "#/ejemplos" : "#/cuadro";
+  const volverCuadro = () => `<a class="volver-cuadro" href="${rutaCuadro()}">← ${modoEjemplo ? "Cuadro de ejemplo" : "Mi cuadro"}</a>`;
   let tGuardar = null, avisoSinEspacio = false;
   function guardar(inmediato) {
     clearTimeout(tGuardar);
     const fn = () => {
-      const ok = escribir(KEY_DATOS, JSON.stringify({ app: "indicadores", v: L.VERSION_DATOS, ultimaCopia: datos.ultimaCopia, indicadores: datos.indicadores, compuestos: datos.compuestos }));
+      const ok = escribir(KEY_DATOS, JSON.stringify({ app: "indicadores", v: L.VERSION_DATOS, ultimaCopia: datosUsuario.ultimaCopia, indicadores: datosUsuario.indicadores, compuestos: datosUsuario.compuestos }));
       if (!ok && !avisoSinEspacio) { avisoSinEspacio = true; toast("No se ha podido guardar en este navegador (¿modo privado o sin espacio?). Haz una copia de seguridad.", 6000); }
     };
     if (inmediato) fn(); else tGuardar = setTimeout(fn, 250);
@@ -128,7 +142,7 @@
       piloto: { a: "24", b: "1", c: "1", d: "4" },
       objetivo: "decidir", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
       plan: { n: "16", c: "14", nota: "Plan exacto de Tamaño Muestral (estándar 95 %, umbral 75 %, α 5 %, β 20 %)." },
-      resultados: [R("2026-T1", "15", "16"), R("2026-T2", "13", "16", "Rojo: faltaba la escala en los ingresos del fin de semana. Se recordó en el cambio de turno."), R("2026-T3", "16", "16")] } },
+    } },
     { titulo: "Conciliación de la medicación al ingreso", sub: "Proceso · porcentaje · estimar", ind: {
       subproceso: "Ingreso en hospitalización", hallazgo: "No se concilia la medicación habitual de los pacientes polimedicados al ingreso", g: "8", o: "6", d: "6",
       criterio: "Se realiza y documenta la conciliación de la medicación en las primeras 24 horas tras el ingreso",
@@ -141,7 +155,7 @@
       observaciones: "Se acompaña de un indicador de resultado (eventos adversos por omisiones o duplicidades).",
       calidad: cal({}), objetivo: "estimar", muestra: { conf: "95", e: "10", p: "", N: "400", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
       plan: { n: "78", c: "", nota: "Estimar con ±10 % y 95 % de confianza en un universo de 400 historias." },
-      resultados: [R("2026-S1", "64", "78", "Dato de una muestra: mira la horquilla en Tamaño Muestral antes de concluir.")] } },
+    } },
     { titulo: "Eventos adversos por omisiones o duplicidades", sub: "Resultado · número absoluto", ind: {
       subproceso: "Ingreso en hospitalización", hallazgo: "No se concilia la medicación habitual de los pacientes polimedicados al ingreso", g: "8", o: "6", d: "6",
       criterio: "No se producen eventos adversos por omisiones o duplicidades de medicación",
@@ -165,7 +179,7 @@
       observaciones: "Las tablas clásicas de Lemeshow dan 33/26, pero su β real es mayor que el 20 %: el plan exacto es 40/33.",
       calidad: cal({}), objetivo: "decidir", muestra: { conf: "95", e: "10", p: "", N: "", loss: "", alpha: "5", beta: "20", sigma: "", eMedia: "" },
       plan: { n: "40", c: "33", nota: "Plan exacto de Tamaño Muestral (90 % / 75 %, α 5 %, β 20 %)." },
-      resultados: [R("2026-S1", "35", "40")] } },
+    } },
     { titulo: "Registro del dolor", sub: "Proceso · porcentaje · LQAS", ind: {
       subproceso: "Atención en urgencias", hallazgo: "No se registra la intensidad del dolor", g: "", o: "", d: "",
       criterio: "Se registra la intensidad del dolor (escala numérica de 0 a 10) en la primera valoración",
@@ -200,7 +214,7 @@
       terminos: "«Caída con daño»: cualquier lesión, aunque sea leve, que conste en la notificación o en la historia. «Estancia»: cada día de ingreso (dato del sistema de información).",
       observaciones: "Estándar orientativo inventado para el ejemplo: compárate con tu propia serie y con unidades parecidas.",
       calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "Se cuentan todas las caídas notificadas y todas las estancias." },
-      resultados: [R("2026-T1", "3", "2.950"), R("2026-T2", "2", "3.100", "Se añadió la valoración del riesgo de caídas al ingreso."), R("2026-T3", "1", "3.000")] } },
+    } },
     { titulo: "Esperas de más de 30 minutos", sub: "Proceso · de media a porcentaje", ind: {
       subproceso: "Atención en urgencias", hallazgo: "Demora hasta la primera atención", g: "", o: "", d: "",
       criterio: "Los pacientes reciben la primera atención en menos de 30 minutos",
@@ -212,7 +226,7 @@
       terminos: "«Llegada»: hora de registro en admisión. «Primera atención»: hora de la primera valoración que consta en el sistema.",
       observaciones: "Antes se usaba el tiempo medio de espera (20 minutos), que escondía pacientes de tres horas. Como porcentaje se ve cuántos quedan fuera del límite.",
       calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "El sistema de información da todos los casos: no hace falta muestra." },
-      resultados: [R("Jul 2026", "312", "2.480"), R("Ago 2026", "270", "2.390"), R("Sep 2026", "230", "2.510", "Segundo profesional en admisión en las horas punta.")] } },
+    } },
     { titulo: "Dispensadores de solución hidroalcohólica", sub: "Estructura · porcentaje", ind: {
       subproceso: "Higiene de manos", hallazgo: "Falta de solución hidroalcohólica en el punto de atención", g: "6", o: "5", d: "3",
       criterio: "Cada punto de atención dispone de solución hidroalcohólica con producto",
@@ -224,14 +238,27 @@
       terminos: "«Operativo»: tiene producto y dispensa al accionarlo. «Punto de atención»: lugar donde se atiende al paciente, a menos de un brazo.",
       observaciones: "Recorrido mensual con una hoja de observación.",
       calidad: cal({}), objetivo: "sin", plan: { n: "", c: "", nota: "Se recorren todos los puntos de atención." },
-      resultados: [R("Jul 2026", "46", "50"), R("Ago 2026", "49", "50"), R("Sep 2026", "50", "50")] } }
+    } }
   ];
   const EJEMPLO_COMPUESTO = { nombre: "Atención al infarto de miocardio", pacientes: "15", estandar: "", conclusion: "", rows: [
     { nom: "Aspirina en las primeras 24 h", cum: "10", opo: "12", ind: "" }, { nom: "β-bloqueantes en las primeras 24 h", cum: "4", opo: "6", ind: "" },
     { nom: "Aspirina al alta", cum: "4", opo: "5", ind: "" }, { nom: "β-bloqueantes al alta", cum: "2", opo: "4", ind: "" },
     { nom: "Consejo antitabaco", cum: "1", opo: "3", ind: "" }, { nom: "Trombolíticos en los primeros 30 minutos", cum: "7", opo: "10", ind: "" }] };
-  function indDesdeEjemplo(e) {
-    const ind = Object.assign(L.nuevoIndicador(genId(), hoy()), clon(e.ind));
+  // Resultados inventados para los ejemplos (mismo orden que EJEMPLOS): verdes, rojos, rachas y tendencia
+  const RESULTADOS_EJ = [
+    [R("2025-T1", "15", "16"), R("2025-T2", "13", "16", "Faltaba la escala en los ingresos del fin de semana."), R("2025-T3", "12", "16", "Segundo trimestre seguido en rojo: se revisa el circuito de ingreso."), R("2025-T4", "15", "16", "Recordatorio en el cambio de turno y campo obligatorio en la historia."), R("2026-T1", "16", "16"), R("2026-T2", "14", "16"), R("2026-T3", "16", "16")],
+    [R("2024-S1", "58", "78"), R("2024-S2", "63", "78", "Se forma al personal en conciliación."), R("2025-S1", "66", "78"), R("2025-S2", "71", "78", "Farmacia revisa los ingresos de polimedicados."), R("2026-S1", "72", "78", "Dato de una muestra: mira la horquilla en Tamaño Muestral antes de concluir.")],
+    [R("Abr 2026", "2", ""), R("May 2026", "1", ""), R("Jun 2026", "1", ""), R("Jul 2026", "0", "", "Primer mes sin eventos tras implantar la conciliación al ingreso."), R("Ago 2026", "0", ""), R("Sep 2026", "1", "", "Un evento por duplicidad de un anticoagulante: se analiza con farmacia.")],
+    [R("2024-S1", "31", "40", "Rojo: se pedían radiografías sin explorar los criterios."), R("2024-S2", "34", "40"), R("2025-S1", "36", "40"), R("2025-S2", "35", "40"), R("2026-S1", "31", "40", "Rojo: llegada de residentes nuevos sin formación en los criterios de Ottawa. Se programa una sesión.")],
+    [R("2025-T1", "14", "22"), R("2025-T2", "15", "22", "Dos trimestres en rojo: se añade la escala de dolor al formulario de triaje."), R("2025-T3", "18", "22"), R("2025-T4", "19", "22"), R("2026-T1", "20", "22"), R("2026-T2", "17", "22"), R("2026-T3", "21", "22")],
+    [R("2024-S1", "0", ""), R("2024-S2", "1", "", "Un caso (lado equivocado, detectado antes de la incisión): análisis causa raíz y refuerzo del marcado del sitio quirúrgico."), R("2025-S1", "0", ""), R("2025-S2", "0", ""), R("2026-S1", "0", "")],
+    [R("2025-T1", "4", "2.900"), R("2025-T2", "3", "3.050"), R("2025-T3", "5", "2.980"), R("2025-T4", "4", "3.120", "Dos trimestres seguidos por encima del estándar."), R("2026-T1", "3", "2.950"), R("2026-T2", "2", "3.100", "Se añadió la valoración del riesgo de caídas al ingreso."), R("2026-T3", "1", "3.000")],
+    [R("Abr 2026", "340", "2.410"), R("May 2026", "318", "2.450"), R("Jun 2026", "301", "2.520"), R("Jul 2026", "312", "2.480"), R("Ago 2026", "270", "2.390"), R("Sep 2026", "230", "2.510", "Segundo profesional en admisión en las horas punta.")],
+    [R("Abr 2026", "44", "50"), R("May 2026", "45", "50"), R("Jun 2026", "47", "50", "Se nombra un responsable de reponer por turno."), R("Jul 2026", "46", "50"), R("Ago 2026", "49", "50"), R("Sep 2026", "50", "50")]
+  ];
+  function indDesdeEjemplo(e, id) {
+    const ind = Object.assign(L.nuevoIndicador(id || genId(), hoy()), clon(e.ind));
+    const i = EJEMPLOS.indexOf(e); if (RESULTADOS_EJ[i]) ind.resultados = clon(RESULTADOS_EJ[i]);
     ind.muestra = Object.assign(L.nuevoIndicador("x", "").muestra, e.ind.muestra || {});
     ind.piloto = Object.assign({ a: "", b: "", c: "", d: "" }, e.ind.piloto || {});
     return ind;
@@ -575,8 +602,8 @@
         <a class="btn" href="#/indicador/${ind.id}/resultados">Resultados</a>
         <button class="btn" data-act="imprimir">Guardar / imprimir</button>
         <button class="btn" data-act="enlace">Compartir enlace</button>
-        <button class="btn" data-act="duplicar">Duplicar</button>
-        <button class="btn btn--peligro-ghost" data-act="borrar">Borrar</button>
+        ${modoEjemplo ? `<button class="btn" data-act="copiar-a-mio">Copiar a mi cuadro</button>` : `<button class="btn" data-act="duplicar">Duplicar</button>
+        <button class="btn btn--peligro-ghost" data-act="borrar">Borrar</button>`}
       </div>
       ${faltan.length ? `<div class="note no-print">ℹ Pasos sin completar: ${faltan.map(p => `<a href="#/indicador/${ind.id}/${p}">${p} · ${PASOS[p - 1].corto}</a>`).join(", ")}.</div>` : ""}
       ${A.length ? `<div class="no-print">${A.map(a => `<div class="warn">⚠ ${esc(a.texto)}</div>`).join("")}</div>` : ""}
@@ -595,16 +622,22 @@
     if (!pts.length) return "";
     const W = 400, H = 210, ml = 44, mr = 14, mt = 16, mb = 38, iw = W - ml - mr, ih = H - mt - mb;
     const x = k => pts.length === 1 ? ml + iw / 2 : ml + k * iw / (pts.length - 1);
-    const cada = Math.ceil(pts.length / 7);
+    // Etiquetas de los periodos: si no caben en una fila, se alternan en dos alturas
+    const cada = Math.ceil(pts.length / 12);
     const ancla = k => pts.length === 1 ? "middle" : k === 0 ? "start" : k === pts.length - 1 ? "end" : "middle";
-    const etiquetas = pts.map((f, k) => k % cada === 0 || k === pts.length - 1 ? `<text class="gr-txt" x="${x(k) + (ancla(k) === "start" ? -6 : ancla(k) === "end" ? 6 : 0)}" y="${H - mb + 16}" text-anchor="${ancla(k)}">${esc(recorta(f.periodo, 10))}</text>` : "").join("");
+    const anchoTxt = Math.max(...pts.map(f => recorta(f.periodo, 10).length)) * 7.2;
+    const hueco = pts.length > 1 ? iw / (pts.length - 1) * cada : iw;
+    const alterna = hueco < anchoTxt * 1.5 + 8;   // la primera y la última van ancladas al borde y ocupan más
+    const dyFila = k => alterna && Math.round(k / cada) % 2 ? 13 : 0;
+    const etiqueta = (f, k, dx, y0) => k % cada === 0 || k === pts.length - 1 ? `<text class="gr-txt" x="${x(k) + (ancla(k) === "start" ? -dx : ancla(k) === "end" ? dx : 0)}" y="${y0 + dyFila(k)}" text-anchor="${ancla(k)}">${esc(recorta(f.periodo, 10))}</text>` : "";
+    const etiquetas = pts.map((f, k) => etiqueta(f, k, 6, H - mb + 16)).join("");
     const titulo = `Resultados de «${esc(ind.nombre || "indicador")}» por periodo`;
     if (L.esLqas(ind)) {
       const y = mt + 40;
       return `<svg class="grafico" viewBox="0 0 ${W} ${mt + 100}" role="img" aria-label="${titulo}"><title>${titulo}</title>
         <line class="gr-eje" x1="${ml - 20}" x2="${W - mr + 6}" y1="${y}" y2="${y}" />
         ${pts.map((f, k) => `<circle class="gr-p gr-p--${f.estado}" cx="${x(k)}" cy="${y}" r="13" /><text class="gr-sem" x="${x(k)}" y="${y + 4.5}" text-anchor="middle">${f.estado === "verde" ? "V" : f.estado === "rojo" ? "R" : "?"}</text>`).join("")}
-        ${pts.map((f, k) => k % cada === 0 || k === pts.length - 1 ? `<text class="gr-txt" x="${x(k) + (ancla(k) === "start" ? -13 : ancla(k) === "end" ? 13 : 0)}" y="${y + 34}" text-anchor="${ancla(k)}">${esc(recorta(f.periodo, 10))}</text>` : "").join("")}
+        ${pts.map((f, k) => etiqueta(f, k, 13, y + 34)).join("")}
         <text class="gr-txt" x="${ml - 20}" y="${mt}">LQAS · regla ${esc(ind.plan.c)} de ${esc(ind.plan.n)} correctos</text>
       </svg>`;
     }
@@ -669,7 +702,7 @@
     const falta = !ind.calculo ? "Elige la forma de cálculo en el paso 2." : ind.calculo !== "centinela" && (!ind.sentido || !lleno(ind.estandar)) ? "Sin sentido (≥ / ≤) y estándar (paso 3) no se puede saber si cada periodo cumple." : lqas && (!lleno(plan.n) || !lleno(plan.c)) ? "Anota n y c del plan LQAS (paso 5) para aplicar la regla." : "";
     view.innerHTML = `
       <div class="wiz-top no-print">
-        <a class="volver-cuadro" href="#/cuadro">← Mi cuadro</a>
+        ${volverCuadro()}
         ${stepperHtml(ind, 7)}
       </div>
       <div class="wiz-titulo"><span class="wiz-paso">Verificar (PDCA)</span><h1 class="page-title">Resultados por periodo</h1></div>
@@ -719,11 +752,11 @@
   function renderWizard(ind, paso) {
     actual = ind; pasoActual = paso; nAyuda = 0;
     const p = PASOS[paso - 1], informe = document.body.classList.contains("ver-informe");
-    const ejBtn = esVacio(ind) && paso === 1 ? `<button class="btn" data-act="cargar-ejemplo-aqui">Cargar ejemplo</button>` : "";
+    const ejBtn = esVacio(ind) && paso === 1 ? `<a class="btn" href="#/indicador/ej-1/1">Ver un ejemplo</a>` : "";
     view.innerHTML = `
       ${informe ? informeBar() : ""}
       <div class="wiz-top no-print">
-        <a class="volver-cuadro" href="#/cuadro">← Mi cuadro</a>
+        ${volverCuadro()}
         ${stepperHtml(ind, paso)}
       </div>
       <div class="wiz-grid${paso === 6 ? " wiz-grid--ficha" : ""}">
@@ -783,12 +816,12 @@
         <a class="guide-card guide-card--hermana" href="${L.TM_URL}" target="_blank" rel="noopener"><span class="guide-num">n</span><div><div class="guide-q">Tamaño Muestral ↗</div><div class="guide-a">La app hermana: <b>cuántos casos revisar</b>, plan LQAS y concordancia entre auditoras.</div></div><span class="guide-go">›</span></a>
       </div>
       <h2 class="sec-t">Ejemplos resueltos</h2>
-      <p class="page-lead">Tócalos para verlos completos. Se añaden a tu cuadro como copia y puedes modificarlos.</p>
+      <p class="page-lead">Tócalos para verlos completos, con sus resultados (inventados). Están aparte: <b>no se mezclan con tus indicadores</b>. Si uno te sirve, pulsa «Copiar a mi cuadro».</p>
       <div class="ej-grid">
-        ${EJEMPLOS.map((e, i) => `<button class="ej-card" data-act="cargar-ejemplo" data-i="${i}"><b>${esc(e.titulo)}</b><span>${esc(e.sub)}</span></button>`).join("")}
-        <button class="ej-card ej-card--cmp" data-act="cargar-ejemplo-cmp"><b>Atención al infarto (compuesto)</b><span>Compuesto · 6 criterios · 70 %</span></button>
+        ${EJEMPLOS.map((e, i) => `<a class="ej-card" href="#/indicador/ej-${i + 1}/resultados"><b>${esc(e.titulo)}</b><span>${esc(e.sub)}</span></a>`).join("")}
+        <a class="ej-card ej-card--cmp" href="#/compuesto/ej-c1"><b>Atención al infarto (compuesto)</b><span>Compuesto · 6 criterios · 70 %</span></a>
       </div>
-      <div class="toolbar"><button class="btn" data-act="cargar-todos">Cargar todos los ejemplos en mi cuadro</button></div>
+      <div class="toolbar"><a class="btn btn--primary" href="#/ejemplos">Ver el cuadro de ejemplo completo</a></div>
       ${practica("Los ejemplos son ilustrativos: sus cifras y estándares son orientativos. Adáptalos siempre a tu unidad.")}`;
   }
 
@@ -804,14 +837,32 @@
     const diasCopia = datos.ultimaCopia ? Math.floor((Date.now() - new Date(datos.ultimaCopia)) / 864e5) : null;
     const avisoCopia = (n || datos.compuestos.length) && (diasCopia === null || diasCopia > 30)
       ? `<div class="warn">⚠ ${diasCopia === null ? "Todavía no has hecho ninguna copia de seguridad." : `Tu última copia de seguridad es de hace ${diasCopia} días.`} Tus datos solo están en este dispositivo. <button class="link-btn" data-act="copia">Hacer copia ahora</button></div>` : "";
+    if (modoEjemplo) {
+      view.innerHTML = `
+      <h1 class="page-title">Cuadro de ejemplo</h1>
+      <p class="page-lead">${n} indicadores y ${datos.compuestos.length} compuesto de muestra, con <b>resultados inventados</b> para que veas los semáforos, los gráficos y la tendencia. Puedes tocarlo todo: <b>no se guarda</b> y no se mezcla con tus indicadores.</p>
+      <div class="toolbar">
+        <a class="btn btn--primary" href="#/cuadro">← Ir a mi cuadro</a>
+        <button class="btn" data-act="informe-cuadro">Ver / imprimir el cuadro</button><button class="btn" data-act="excel">Exportar a Excel</button>
+      </div>
+      ${equilibrioHtml()}
+      <div class="cuadro-lista">${lista.map(tarjetaInd).join("")}</div>
+      <h2 class="sec-t">Indicadores compuestos</h2><div class="cuadro-lista">${datos.compuestos.map(tarjetaCmp).join("")}</div>`;
+      return;
+    }
+    const nomEj = new Set(EJEMPLOS.map(e => e.ind.nombre));
+    const copiasEj = datos.indicadores.filter(i => nomEj.has(i.nombre)).length + datos.compuestos.filter(c => c.nombre === EJEMPLO_COMPUESTO.nombre).length;
+    const avisoEj = copiasEj ? `<div class="note">ℹ Tu cuadro tiene <b>${copiasEj}</b> copia${copiasEj === 1 ? "" : "s"} de los ejemplos (añadidas con una versión anterior de la app). Ahora los ejemplos están aparte, en el <a href="#/ejemplos">cuadro de ejemplo</a>. <button class="link-btn" data-act="quitar-copias-ej">Quitarlas de mi cuadro</button></div>` : "";
     view.innerHTML = `
       <h1 class="page-title">Mi cuadro de indicadores</h1>
-      <p class="page-lead">${n ? `${n} indicador${n === 1 ? "" : "es"}${datos.compuestos.length ? ` y ${datos.compuestos.length} compuesto${datos.compuestos.length === 1 ? "" : "s"}` : ""}. Se guardan solo en este dispositivo.` : "Todavía no tienes indicadores. Crea el primero o carga un ejemplo desde el inicio."}</p>
+      <p class="page-lead">${n ? `${n} indicador${n === 1 ? "" : "es"}${datos.compuestos.length ? ` y ${datos.compuestos.length} compuesto${datos.compuestos.length === 1 ? "" : "s"}` : ""}. Se guardan solo en este dispositivo.` : "Todavía no tienes indicadores. Crea el primero o mira antes el cuadro de ejemplo."}</p>
       <div class="toolbar">
         <a class="btn btn--primary" href="#/nuevo">+ Nuevo indicador</a>
         <a class="btn" href="#/compuesto/nuevo">+ Nuevo compuesto</a>
+        <a class="btn" href="#/ejemplos">Ver cuadro de ejemplo</a>
         ${n ? `<button class="btn" data-act="informe-cuadro">Ver / imprimir el cuadro</button><button class="btn" data-act="excel">Exportar a Excel</button>` : ""}
       </div>
+      ${avisoEj}
       ${avisoCopia}
       ${n ? equilibrioHtml() : ""}
       ${n > 1 ? `<div class="filtros">
@@ -859,7 +910,7 @@
         ${meta ? `<span class="ind-meta">${meta}</span>` : ""}
         ${ult ? `<span class="res-est res-est--${ult.estado}"><span class="punto"></span>${esc(ult.periodo)}: ${esc(L.textoResultado(ind, ult))} · ${ESTADO_TXT(ind, ult)}</span>` : ""}
       </a>
-      <div class="ind-pie">${puntosProgreso(ind)}<span class="ind-acc"><a href="#/indicador/${ind.id}/6">Ficha</a><a href="#/indicador/${ind.id}/resultados">Resultados</a><button class="link-btn" data-act="duplicar" data-id="${ind.id}">Duplicar</button><button class="link-btn link-btn--peligro" data-act="borrar" data-id="${ind.id}">Borrar</button></span></div>
+      <div class="ind-pie">${puntosProgreso(ind)}<span class="ind-acc"><a href="#/indicador/${ind.id}/6">Ficha</a><a href="#/indicador/${ind.id}/resultados">Resultados</a>${modoEjemplo ? `<button class="link-btn" data-act="copiar-a-mio" data-id="${ind.id}">Copiar a mi cuadro</button>` : `<button class="link-btn" data-act="duplicar" data-id="${ind.id}">Duplicar</button><button class="link-btn link-btn--peligro" data-act="borrar" data-id="${ind.id}">Borrar</button>`}</span></div>
     </div>`;
   }
   function tarjetaCmp(c) {
@@ -870,7 +921,7 @@
         <b class="ind-nombre">${lleno(c.nombre) ? esc(c.nombre) : '<span class="vacio">Compuesto sin nombre</span>'}</b>
         ${r.valido ? `<span class="ind-meta"><b class="cmp-mini">${L.pct1(r.pct)}</b> · ${r.cum}/${r.opo} oportunidades · punto débil: ${esc(r.flojo.nom)} (${L.pct1(r.flojo.pct)})</span>` : `<span class="ind-meta">Sin datos completos</span>`}
       </a>
-      <div class="ind-pie"><span></span><span class="ind-acc"><button class="link-btn link-btn--peligro" data-act="borrar-cmp" data-id="${c.id}">Borrar</button></span></div>
+      <div class="ind-pie"><span></span><span class="ind-acc">${modoEjemplo ? `<button class="link-btn" data-act="copiar-a-mio" data-id="${c.id}">Copiar a mi cuadro</button>` : `<button class="link-btn link-btn--peligro" data-act="borrar-cmp" data-id="${c.id}">Borrar</button>`}</span></div>
     </div>`;
   }
   function ultimoTxt(ind) {
@@ -895,7 +946,7 @@
     const informe = document.body.classList.contains("ver-informe");
     view.innerHTML = `
       ${informe ? informeBar() : ""}
-      <div class="wiz-top no-print"><a class="volver-cuadro" href="#/cuadro">← Mi cuadro</a></div>
+      <div class="wiz-top no-print">${volverCuadro()}</div>
       <h1 class="page-title no-print">Indicador compuesto</h1>
       ${informeCab("Indicador compuesto" + (lleno(c.nombre) ? ": " + c.nombre : ""))}
       <div class="no-print">
@@ -914,7 +965,7 @@
             <button class="btn cmp-add" data-act="cmp-add">+ Añadir criterio</button>
             ${datos.indicadores.some(i => i.calculo === "porcentaje") ? `<label class="cmp-desde">O añade uno de tu cuadro: <select data-act-sel="cmp-desde"><option value="">Elegir…</option>${datos.indicadores.filter(i => i.calculo === "porcentaje").map(i => `<option value="${i.id}">${esc(i.nombre.slice(0, 80))}</option>`).join("")}</select></label>` : ""}
           </div>
-          <div class="toolbar">${esVacioCmp(c) ? `<button class="btn" data-act="cmp-ejemplo">Cargar ejemplo (infarto)</button>` : ""}<a class="btn" href="${L.TM_URL}#/compuesto?d=${encodeURIComponent(JSON.stringify({ pac: c.pacientes, rows: c.rows.map(r => ({ nom: r.nom, cum: r.cum, opo: r.opo })) }))}" target="_blank" rel="noopener" data-zona-href-cmp>Abrir en Tamaño Muestral ↗</a></div>
+          <div class="toolbar">${esVacioCmp(c) ? `<a class="btn" href="#/compuesto/ej-c1">Ver el ejemplo (infarto)</a>` : ""}<a class="btn" href="${L.TM_URL}#/compuesto?d=${encodeURIComponent(JSON.stringify({ pac: c.pacientes, rows: c.rows.map(r => ({ nom: r.nom, cum: r.cum, opo: r.opo })) }))}" target="_blank" rel="noopener" data-zona-href-cmp>Abrir en Tamaño Muestral ↗</a></div>
         </div>
         <div class="calc-result-col" data-zona-cmp>${resultadoCmpHtml(c)}</div>
       </div>
@@ -946,7 +997,7 @@
       ${pac && r.opo > pac ? `<div class="warn">⚠ ${r.opo} oportunidades no son ${r.opo} pacientes: vienen de ${pac} pacientes, y las de un mismo paciente se parecen.</div>` : ""}
       <div class="an-frase"><span class="box-tag">Conclusión (titular + desglose)</span><p>${esc(frase)}</p></div>
       <div class="no-print">${campo(c, "conclusion", "Tu conclusión", { area: true, opt: true, ph: L.fraseCompuesto(c.nombre, r), help: "Si la dejas vacía se usa la frase propuesta." })}</div>
-      <div class="toolbar no-print"><button class="btn btn--primary" data-act="informe">Ver informe</button><button class="btn" data-act="imprimir">Guardar / imprimir</button><button class="btn btn--peligro-ghost" data-act="borrar-cmp" data-id="${c.id}">Borrar</button></div>`;
+      <div class="toolbar no-print"><button class="btn btn--primary" data-act="informe">Ver informe</button><button class="btn" data-act="imprimir">Guardar / imprimir</button>${modoEjemplo ? `<button class="btn" data-act="copiar-a-mio" data-id="${c.id}">Copiar a mi cuadro</button>` : `<button class="btn btn--peligro-ghost" data-act="borrar-cmp" data-id="${c.id}">Borrar</button>`}</div>`;
   }
   function refrescarCmp() {
     const z = $("[data-zona-cmp]"); if (!z || !cmpActual) return;
@@ -1243,7 +1294,7 @@
   function irInforme() {
     if (actual) location.hash = `#/indicador/${actual.id}/6?informe=1`;
     else if (cmpActual) location.hash = `#/compuesto/${cmpActual.id}?informe=1`;
-    else location.hash = "#/cuadro?informe=1";
+    else location.hash = rutaCuadro() + "?informe=1";
   }
   function imprimir() {
     if (esIOS()) { guardarPDF(); return; }
@@ -1253,16 +1304,16 @@
 
   // ---------- Copia de seguridad, importar y Excel ----------
   async function copiaSeguridad() {
-    const contenido = JSON.stringify({ app: "indicadores", v: L.VERSION_DATOS, exportado: hoy(), indicadores: datos.indicadores, compuestos: datos.compuestos }, null, 1);
+    const contenido = JSON.stringify({ app: "indicadores", v: L.VERSION_DATOS, exportado: hoy(), indicadores: datosUsuario.indicadores, compuestos: datosUsuario.compuestos }, null, 1);
     const nombre = `Indicadores copia ${new Date().toISOString().slice(0, 10)}.json`;
     const blob = new Blob([contenido], { type: "application/json" });
     const file = new File([blob], nombre, { type: "application/json" });
     if (esIOS() && navigator.canShare && navigator.canShare({ files: [file] })) {
       try { await navigator.share({ files: [file], title: nombre }); } catch (e) { if (e && e.name === "AbortError") return; }
     } else descargar(blob, nombre);
-    datos.ultimaCopia = hoy(); guardar(true);
+    datosUsuario.ultimaCopia = hoy(); guardar(true);
     toast("Copia guardada. Guárdala en un sitio seguro (Archivos, Drive, correo…).", 4500);
-    if (rutaActual() === "#/cuadro") renderCuadro();
+    if (rutaActual() === rutaCuadro()) renderCuadro();
   }
   function importar(file) {
     const fr = new FileReader();
@@ -1271,8 +1322,8 @@
       if (!s) { toast("Ese archivo no es una copia de Indicadores.", 4000); return; }
       const hay = datos.indicadores.length + datos.compuestos.length;
       const aplicar = modo => {
-        const r = modo === "sustituir" ? s : L.fusionar(datos, s);
-        datos.indicadores = r.indicadores; datos.compuestos = r.compuestos; guardar(true);
+        const r = modo === "sustituir" ? s : L.fusionar(datosUsuario, s);
+        datosUsuario.indicadores = r.indicadores; datosUsuario.compuestos = r.compuestos; guardar(true);
         toast(`Importados ${s.indicadores.length} indicadores y ${s.compuestos.length} compuestos.`, 4000);
         location.hash = "#/cuadro"; route();
       };
@@ -1308,7 +1359,7 @@
   }
 
   // ---------- Enrutado ----------
-  const NAV = [["", "Inicio"], ["cuadro", "Mi cuadro"], ["nuevo", "Nuevo indicador"], ["compuesto/nuevo", "Compuesto"], ["aprende", "Aprende"], ["glosario", "Glosario"], ["prueba", "Ponte a prueba"]];
+  const NAV = [["", "Inicio"], ["cuadro", "Mi cuadro"], ["ejemplos", "Ejemplos"], ["nuevo", "Nuevo indicador"], ["compuesto/nuevo", "Compuesto"], ["aprende", "Aprende"], ["glosario", "Glosario"], ["prueba", "Ponte a prueba"]];
   function buildNav() { $("#calc-nav").innerHTML = NAV.map(([r, t]) => `<a href="#/${r}" data-r="${r}">${t}</a>`).join(""); }
   function route() {
     const [ruta, qs] = (location.hash.replace(/^#\/?/, "") || "").split("?");
@@ -1316,6 +1367,12 @@
     const informe = /(^|&)informe=1(&|$)/.test(qs || "");
     document.body.classList.toggle("ver-informe", informe);
     actual = null; cmpActual = null;
+    const idR = partes[1] || "";
+    modoEjemplo = partes[0] === "ejemplos" || (["indicador", "compuesto"].includes(partes[0]) && esIdEjemplo(idR) && !!(cuadroEjemplo().indicadores.some(x => x.id === idR) || cuadroEjemplo().compuestos.some(x => x.id === idR)));
+    datos = modoEjemplo ? cuadroEjemplo() : datosUsuario;
+    const banner = $("#banner-ejemplo");
+    banner.hidden = !modoEjemplo || informe || partes[0] === "ejemplos";
+    $("#banner-copiar").hidden = partes[0] === "ejemplos";
     let navR = partes[0];
     if (partes[0] === "nuevo") {
       const ind = L.nuevoIndicador(genId(), hoy());
@@ -1332,7 +1389,7 @@
       let c = partes[1] === "nuevo" ? null : buscaCmp(partes[1]) || borradores.get(partes[1]);
       if (!c) { c = L.nuevoCompuesto(genId(), hoy()); borradores.set(c.id, c); history.replaceState(null, "", `#/compuesto/${c.id}`); }
       renderCompuesto(c); navR = "compuesto/nuevo";
-    } else if (partes[0] === "cuadro") renderCuadro();
+    } else if (partes[0] === "cuadro" || partes[0] === "ejemplos") renderCuadro();
     else if (partes[0] === "ver") {
       const md = /(?:^|&)d=([^&]*)/.exec(qs || "");
       compartido = null;
@@ -1346,6 +1403,7 @@
     else if (partes[0] === "glosario") renderGlosario();
     else if (partes[0] === "prueba") renderPrueba();
     else { renderHome(); navR = ""; }
+    if (modoEjemplo) navR = "ejemplos";
     if (informe) { $$("details").forEach(d => { d.open = true; }); if (esIOS()) prepararPDF(); }
     $$("#calc-nav a").forEach(a => a.classList.toggle("active", a.dataset.r === navR));
     const act = $("#calc-nav a.active"); if (act && act.scrollIntoView) act.scrollIntoView({ block: "nearest", inline: "center" });
@@ -1353,6 +1411,19 @@
   }
   const borradores = new Map();
   let compartidoPrevio = null;
+
+  function copiarAMiCuadro(id) {
+    const ej = cuadroEjemplo(), ind = ej.indicadores.find(x => x.id === id), cmp = ej.compuestos.find(x => x.id === id);
+    if (ind) {
+      const copia = Object.assign(clon(ind), { id: genId(), creado: hoy(), modificado: hoy(), resultados: [] });
+      datosUsuario.indicadores.push(copia); guardar(true); location.hash = `#/indicador/${copia.id}/6`;
+      toast("Copiado a tu cuadro (sin los resultados inventados). Ya es tuyo: cámbialo a tu gusto.", 4500);
+    } else if (cmp) {
+      const copia = Object.assign(clon(cmp), { id: genId(), creado: hoy(), modificado: hoy() });
+      datosUsuario.compuestos.push(copia); guardar(true); location.hash = `#/compuesto/${copia.id}`;
+      toast("Compuesto copiado a tu cuadro.", 3500);
+    }
+  }
 
   // ---------- Eventos ----------
   function tocado(obj) {
@@ -1421,16 +1492,18 @@
       const hacer = () => { actual.nombre = L.sugerirNombre(actual.criterio); tocado(actual); renderWizard(actual, 1); toast("Revisa el nombre: cambia «casos» por lo que cuentas (pacientes, historias…).", 4500); };
       if (lleno(actual.nombre)) confirmar("<p>Se sustituirá el nombre que has escrito.</p>", "Sustituir", hacer, { peligro: false }); else hacer();
     }
-    else if (a === "cargar-ejemplo") { const ind = indDesdeEjemplo(EJEMPLOS[Number(b.dataset.i)]); datos.indicadores.push(ind); guardar(); location.hash = `#/indicador/${ind.id}/6`; toast("Ejemplo añadido a tu cuadro como copia.", 3000); }
-    else if (a === "cargar-ejemplo-aqui") { const e = EJEMPLOS[0], id = actual.id; const nuevo = indDesdeEjemplo(e); nuevo.id = id; Object.assign(actual, nuevo); tocado(actual); renderWizard(actual, 1); }
-    else if (a === "cargar-ejemplo-cmp") { const c = Object.assign(L.nuevoCompuesto(genId(), hoy()), clon(EJEMPLO_COMPUESTO)); datos.compuestos.push(c); guardar(); location.hash = `#/compuesto/${c.id}`; }
-    else if (a === "cargar-todos") {
-      EJEMPLOS.forEach(e => datos.indicadores.push(indDesdeEjemplo(e)));
-      datos.compuestos.push(Object.assign(L.nuevoCompuesto(genId(), hoy()), clon(EJEMPLO_COMPUESTO)));
-      guardar(); location.hash = "#/cuadro"; toast(`${EJEMPLOS.length} indicadores y un compuesto de ejemplo añadidos.`, 3500);
+    else if (a === "copiar-a-mio" || (a === "duplicar" && modoEjemplo)) copiarAMiCuadro(b.dataset.id || (actual ? actual.id : cmpActual ? cmpActual.id : ""));
+    else if (a === "quitar-copias-ej") {
+      const nomEj = new Set(EJEMPLOS.map(e => e.ind.nombre));
+      const ni = datosUsuario.indicadores.filter(i => nomEj.has(i.nombre)).length, nc = datosUsuario.compuestos.filter(c => c.nombre === EJEMPLO_COMPUESTO.nombre).length;
+      confirmar(`<p>Se quitarán de tu cuadro <b>${ni + nc}</b> copias de los ejemplos (las que conservan el mismo nombre que el ejemplo). Si has modificado alguna y quieres conservarla, cámbiale antes el nombre.</p><p>Los ejemplos seguirán disponibles en el cuadro de ejemplo.</p>`, "Quitarlas", () => {
+        datosUsuario.indicadores = datosUsuario.indicadores.filter(i => !nomEj.has(i.nombre));
+        datosUsuario.compuestos = datosUsuario.compuestos.filter(c => c.nombre !== EJEMPLO_COMPUESTO.nombre);
+        guardar(true); renderCuadro(); toast("Copias de los ejemplos quitadas de tu cuadro.", 3000);
+      }, { titulo: "Quitar copias de ejemplos" });
     }
     else if (a === "informe") irInforme();
-    else if (a === "informe-cuadro") location.hash = "#/cuadro?informe=1";
+    else if (a === "informe-cuadro") location.hash = rutaCuadro() + "?informe=1";
     else if (a === "volver") location.hash = rutaActual();
     else if (a === "imprimir") imprimir();
     else if (a === "enlace") compartirEnlace(actual);
@@ -1443,7 +1516,7 @@
       const ind = b.dataset.id ? buscaInd(b.dataset.id) : actual; if (!ind) return;
       confirmar(`<p>Se borrará «${esc(ind.nombre || "indicador sin nombre")}» de este dispositivo. No se puede deshacer (salvo que tengas una copia de seguridad).</p>`, "Borrar", () => {
         datos.indicadores = datos.indicadores.filter(x => x.id !== ind.id); borradores.delete(ind.id); guardar(true);
-        if (rutaActual() === "#/cuadro") renderCuadro(); else location.hash = "#/cuadro";
+        if (rutaActual() === rutaCuadro()) renderCuadro(); else location.hash = rutaCuadro();
         toast("Indicador borrado.", 2500);
       }, { titulo: "Borrar indicador" });
     }
@@ -1451,12 +1524,11 @@
       const c = buscaCmp(b.dataset.id) || cmpActual; if (!c) return;
       confirmar(`<p>Se borrará el compuesto «${esc(c.nombre || "sin nombre")}». No se puede deshacer.</p>`, "Borrar", () => {
         datos.compuestos = datos.compuestos.filter(x => x.id !== c.id); borradores.delete(c.id); guardar(true);
-        if (rutaActual() === "#/cuadro") renderCuadro(); else location.hash = "#/cuadro";
+        if (rutaActual() === rutaCuadro()) renderCuadro(); else location.hash = rutaCuadro();
       }, { titulo: "Borrar compuesto" });
     }
     else if (a === "cmp-add") { cmpActual.rows.push({ nom: "", cum: "", opo: "", ind: "" }); tocado(cmpActual); renderCompuesto(cmpActual); const ins = $$(".cmp-nom"); ins[ins.length - 1].focus(); }
     else if (a === "cmp-del") { cmpActual.rows.splice(Number(b.dataset.i), 1); tocado(cmpActual); renderCompuesto(cmpActual); }
-    else if (a === "cmp-ejemplo") { Object.assign(cmpActual, clon(EJEMPLO_COMPUESTO)); tocado(cmpActual); renderCompuesto(cmpActual); }
     else if (a === "res-add" && actual) {
       const prev = actual.resultados[actual.resultados.length - 1];
       actual.resultados.push(L.nuevaMedicion(prev ? L.siguientePeriodo(prev.periodo) : ""));
@@ -1474,11 +1546,12 @@
     else if (a === "excel") exportarExcel();
     else if (a === "anadir-compartido" && compartido) {
       const ind = clon(compartido);
-      if (buscaInd(ind.id)) ind.id = genId();
+      if (esIdEjemplo(ind.id) || datosUsuario.indicadores.some(x => x.id === ind.id)) ind.id = genId();
       ind.creado = ind.modificado = hoy();
-      datos.indicadores.push(ind); guardar(true); location.hash = `#/indicador/${ind.id}/6`; toast("Añadido a tu cuadro.", 3000);
+      datosUsuario.indicadores.push(ind); guardar(true); location.hash = `#/indicador/${ind.id}/6`; toast("Añadido a tu cuadro.", 3000);
     }
   });
+  $("#banner-copiar").addEventListener("click", () => copiarAMiCuadro(actual ? actual.id : cmpActual ? cmpActual.id : ""));
   $("#input-importar").addEventListener("change", e => { const f = e.target.files && e.target.files[0]; if (f) importar(f); e.target.value = ""; });
 
   // Imprimir: abrir los desplegables y restaurarlos después

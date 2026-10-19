@@ -73,3 +73,10 @@ Carpeta `Backup/` (ignorada en git) con las 5 copias más recientes:
 ## 9. Uso general, sin referencias directas al curso (v2026.03, decisión del autor)
 - La app es para cualquier profesional, haya hecho o no el curso. En la interfaz NO se mencionan el curso, el «tema 3», los ejercicios 5A/5B/5C, la «plantilla 5B», la «unidad temática» ni el «minicaso»; los nombres de las hojas del Excel tampoco. El curso solo aparece como **fuente** en «Acerca de». Los ejemplos se siguen tomando de la teoría o inventados (nunca de los ejercicios prácticos), pero sin decirlo en pantalla.
 - Portada: título «Indicadores» y tarjeta de acceso a Tamaño Muestral (`.guide-card--hermana`). Tamaño Muestral tiene a su vez un enlace a Indicadores (portada y «Acerca de»).
+
+## 10. Cuadro de ejemplo separado (v2026.03, decisión del autor)
+- El usuario empieza con el cuadro vacío. Los ejemplos NO se copian a sus datos: viven en memoria en `cuadroEjemplo()` (ids `ej-1`…`ej-9` y `ej-c1`), con resultados inventados (`RESULTADOS_EJ`, mismo orden que `EJEMPLOS`; dos terminan en rojo a propósito).
+- El modo ejemplo se deduce de la ruta: `#/ejemplos` o `#/indicador|compuesto/ej-…` → `modoEjemplo = true` y `datos = cuadroEjemplo()`; en cualquier otra ruta `datos = datosUsuario`. `guardar()` solo escribe `datosUsuario`, así que lo que se toque en un ejemplo se pierde al recargar.
+- Franja `#banner-ejemplo` (fuera de `#view`) con «Cuadro de ejemplo» y «Copiar a mi cuadro» (`copiarAMiCuadro`: id nuevo y sin resultados). En modo ejemplo no hay Duplicar/Borrar ni copia de seguridad/importar. Un indicador compartido o importado nunca conserva un id `ej-`.
+- Aviso en «Mi cuadro» si hay copias de ejemplos de versiones anteriores (mismo nombre que un ejemplo) con botón «Quitarlas de mi cuadro» (con confirmación).
+- Gráfico de resultados: si las etiquetas de periodo no caben (`hueco < anchoTxt·1,5 + 8`), se alternan en dos alturas.

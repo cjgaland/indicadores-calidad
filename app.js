@@ -11,8 +11,10 @@
   // ---------- Versión y novedades ----------
   // Al publicar cambios: añadir una entrada AL PRINCIPIO de NOVEDADES, poner su versión en los ?v= de index.html, en
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
-  const APP_VERSION = "2026.03";
+  const APP_VERSION = "2026.04";
   const NOVEDADES = [
+    { version: "2026.04", fecha: "Octubre 2026", titulo: "Nueva app hermana: Auditorías", cambios: [
+      "Acceso directo desde la portada y desde «Acerca de» a Auditorías, la app hermana para planificar, realizar, informar y hacer el seguimiento de una auditoría completa: Mapa de Riesgos, Plan Anual, diseño con indicadores y muestra, recogida de datos, informe y plan de mejora."] },
     { version: "2026.03", fecha: "Octubre 2026", titulo: "Una app para todos", cambios: [
       "La app es ahora de uso general: se han quitado las referencias directas al curso de auditorías (que sigue citado entre las fuentes, en «Acerca de»).",
       "La portada se titula «Indicadores» y tiene un acceso directo a la app hermana Tamaño Muestral.",
@@ -814,6 +816,7 @@
         <a class="guide-card" href="#/prueba"><span class="guide-num">✓</span><div><div class="guide-q">Ponte a prueba</div><div class="guide-a">Doce preguntas para comprobar si lo tienes claro.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card" href="#/glosario"><span class="guide-num">A–Z</span><div><div class="guide-q">Glosario</div><div class="guide-a">Cada término <b>en lenguaje llano</b>, con buscador.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.TM_URL}" target="_blank" rel="noopener"><span class="guide-num">n</span><div><div class="guide-q">Tamaño Muestral ↗</div><div class="guide-a">La app hermana: <b>cuántos casos revisar</b>, plan LQAS y concordancia entre auditoras.</div></div><span class="guide-go">›</span></a>
+        <a class="guide-card guide-card--hermana" href="${L.AUD_URL}" target="_blank" rel="noopener"><span class="guide-num">↻</span><div><div class="guide-q">Auditorías ↗</div><div class="guide-a">La app hermana: <b>planifica, realiza e informa una auditoría completa</b>, del Mapa de Riesgos al plan de mejora y el seguimiento.</div></div><span class="guide-go">›</span></a>
       </div>
       <h2 class="sec-t">Ejemplos resueltos</h2>
       <p class="page-lead">Tócalos para verlos completos, con sus resultados (inventados). Están aparte: <b>no se mezclan con tus indicadores</b>. Si uno te sirve, pulsa «Copiar a mi cuadro».</p>

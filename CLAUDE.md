@@ -5,7 +5,7 @@ Guía de referencia para el desarrollo asistido por IA. Léela antes de proponer
 ## 1. Descripción
 PWA estática (sin build, sin dependencias, sin CDN) para **crear, definir y comprobar indicadores de calidad y seguridad del paciente**, tal y como se enseña en el curso «Auditorías para la Mejora de la Seguridad del Paciente. Del Mapa de Riesgos a la Mejora Continua» (Pozoblanco, octubre de 2026): tema 3 y ejercicios 5A (caracterización), 5B (definición operativa) y 5C (compuesto). Herramienta docente y de apoyo; no sustituye el criterio profesional.
 
-Hermana de **Tamaño Muestral** y de **Auditorías** (`/Users/Trabajo/Desktop/App Auditorías/`, https://cjgaland.github.io/auditorias/, enlazada desde la portada y «Acerca de» desde v2026.04; `L.AUD_URL`) (`/Users/Trabajo/Desktop/Tamaño Muestral/`, https://cjgaland.github.io/tamano-muestral/): mismos tokens CSS, modo claro/oscuro, modales (bienvenida, Acerca de, novedades), SW network-first con aviso «Nueva versión disponible», informe imprimible y PDF en iOS.
+Hermana de **Tamaño Muestral** y de **Auditorías** (`/Users/Trabajo/Desktop/Auditorías/Aplicación/`, https://cjgaland.github.io/auditorias/, enlazada desde la portada y «Acerca de» desde v2026.04; `L.AUD_URL`) (`/Users/Trabajo/Desktop/Tamaño Muestral/Aplicación/`, https://cjgaland.github.io/tamano-muestral/): mismos tokens CSS, modo claro/oscuro, modales (bienvenida, Acerca de, novedades), SW network-first con aviso «Nueva versión disponible», informe imprimible y PDF en iOS.
 
 Autoría (idéntica en el pie de index.html, «Acerca de», el pie del informe en app.js —`informePie()`— y el README; orden alfabético, sin centro de trabajo): Carlos J. Galán Doval (Médico de Familia · Técnico en Calidad y Seguridad del Paciente) y Rafael J. Romero de Castilla Gil (Médico de Familia · Responsable del Área de Calidad y Seguridad del Paciente), Área de Gestión Sanitaria Sur de Córdoba · Andalucía.
 
@@ -57,8 +57,8 @@ Autoría (idéntica en el pie de index.html, «Acerca de», el pie del informe e
 - `APP_VERSION` y `NOVEDADES` al principio de `app.js` (formato AAAA.NN, la más reciente arriba). Claves de localStorage: `indicadores-version-vista`, `indicadores-bienvenida-vista`, `indicadores-tema`, `indicadores-facil-abierto`, `indicadores-datos`.
 
 ## 6. Copias de seguridad locales
-Carpeta `Backup/` (ignorada en git) con las 5 copias más recientes:
-`bash ~/.claude/skills/app-copia_seguridad/scripts/copia_seguridad.sh --root "/Users/Trabajo/Desktop/Indicadores" --name Indicadores`. Hacer una antes de cada publicación.
+Estructura (desde 2026-10-21): `Desktop/Indicadores/Aplicación/` contiene `Aplicación/` (este repositorio) y `Backup/` (fuera del repositorio), igual que Auditorías. Copias con las 5 más recientes:
+`bash ~/.claude/skills/app-copia_seguridad/scripts/copia_seguridad.sh --root "/Users/Trabajo/Desktop/Indicadores" --name Indicadores --exclude .claude`. Hacer una antes de cada publicación.
 
 ## 7. Publicación
 - Repositorio público `cjgaland/indicadores-calidad`; GitHub Pages desde `main` (raíz): https://cjgaland.github.io/indicadores-calidad/. Creado y publicado con permiso del autor el 2026-10-19 (v2026.01; Pages tarda ~40 s). Cada nueva publicación (push) se hace solo cuando el autor lo pida. v2026.02 (fase 2, resultados por periodo) publicada el 2026-10-19.

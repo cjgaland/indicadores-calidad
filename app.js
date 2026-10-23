@@ -11,8 +11,10 @@
   // ---------- Versión y novedades ----------
   // Al publicar cambios: añadir una entrada AL PRINCIPIO de NOVEDADES, poner su versión en los ?v= de index.html, en
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
-  const APP_VERSION = "2026.06";
+  const APP_VERSION = "2026.07";
   const NOVEDADES = [
+    { version: "2026.07", fecha: "Octubre 2026", titulo: "Nueva app hermana: Mapa de Riesgos", cambios: [
+      "Acceso directo desde la portada y desde «Acerca de» a Mapa de Riesgos, la nueva app hermana: elabora paso a paso el mapa de riesgos de un proceso (flujograma, AMFE, acciones de mejora y el mapa coloreado por IPR) y puede usar tus indicadores para medir las acciones."] },
     { version: "2026.06", fecha: "Octubre 2026", titulo: "Nuevas apps hermanas: Flujograma y DAFO · CAME", cambios: [
       "Acceso directo desde la portada y desde «Acerca de» a Flujograma (dibuja el flujograma de un proceso y marca sus puntos críticos) y a DAFO · CAME (análisis DAFO de una unidad y plan de acción con indicadores), las nuevas apps hermanas."] },
     { version: "2026.05", fecha: "Octubre 2026", titulo: "Nueva app hermana: AMFE", cambios: [
@@ -824,6 +826,7 @@
         <a class="guide-card guide-card--hermana" href="${L.AMFE_URL}" target="_blank" rel="noopener"><span class="guide-num">IPR</span><div><div class="guide-q">AMFE ↗</div><div class="guide-a">La app hermana: <b>analiza los fallos de un proceso</b> con G·O·D e IPR y elige cuáles medir; desde ella puedes traer tus indicadores a sus acciones de mejora.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.FLUJO_URL}" target="_blank" rel="noopener"><span class="guide-num">→</span><div><div class="guide-q">Flujograma ↗</div><div class="guide-a">La app hermana: <b>dibuja el flujograma de un proceso</b> y marca sus puntos críticos, donde conviene poner un indicador.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.DAFO_URL}" target="_blank" rel="noopener"><span class="guide-num">D</span><div><div class="guide-q">DAFO · CAME ↗</div><div class="guide-a">La app hermana: <b>analiza tu unidad</b> (debilidades, amenazas, fortalezas y oportunidades) y conviértelo en un plan de acción con indicadores.</div></div><span class="guide-go">›</span></a>
+        <a class="guide-card guide-card--hermana" href="${L.MAPA_URL}" target="_blank" rel="noopener"><span class="guide-num">◆</span><div><div class="guide-q">Mapa de Riesgos ↗</div><div class="guide-a">La app hermana: <b>elabora el mapa de riesgos de un proceso</b>, del flujograma y el AMFE a las acciones de mejora; puede traer tus indicadores para medirlas.</div></div><span class="guide-go">›</span></a>
       </div>
       <h2 class="sec-t">Ejemplos resueltos</h2>
       <p class="page-lead">Tócalos para verlos completos, con sus resultados (inventados). Están aparte: <b>no se mezclan con tus indicadores</b>. Si uno te sirve, pulsa «Copiar a mi cuadro».</p>

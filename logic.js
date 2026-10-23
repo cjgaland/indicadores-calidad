@@ -13,6 +13,7 @@
   const AMFE_URL = "https://cjgaland.github.io/amfe/";
   const FLUJO_URL = "https://cjgaland.github.io/flujograma/";
   const DAFO_URL = "https://cjgaland.github.io/dafo/";
+  const MAPA_URL = "https://cjgaland.github.io/mapa-riesgos/";
   const VERSION_DATOS = 1;
 
   // ---------- Catálogos ----------
@@ -595,7 +596,7 @@
   }
 
   const API = {
-    TM_URL, AUD_URL, AMFE_URL, FLUJO_URL, DAFO_URL, VERSION_DATOS, TIPOS, CALCULOS, CALIDAD, PERIODICIDADES, FUENTES,
+    TM_URL, AUD_URL, AMFE_URL, FLUJO_URL, DAFO_URL, MAPA_URL, VERSION_DATOS, TIPOS, CALCULOS, CALIDAD, PERIODICIDADES, FUENTES,
     num, lleno, nfmt, sinTildes, nuevoIndicador, nuevoCompuesto, ipr, sugerirNombre, sentidoSugerido,
     unidadPorDefecto, unidad, formula, usaDenominador, textoEstandar, avisos, pistasCalidad, estadoCalidad, acuerdoPiloto,
     pasosCompletos, recomendacionMuestra, lqasParams, enlaceTM, enlacesTM, calcCompuesto, fraseCompuesto, pct1,

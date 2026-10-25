@@ -11,8 +11,10 @@
   // ---------- Versión y novedades ----------
   // Al publicar cambios: añadir una entrada AL PRINCIPIO de NOVEDADES, poner su versión en los ?v= de index.html, en
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
-  const APP_VERSION = "2026.11";
+  const APP_VERSION = "2026.12";
   const NOVEDADES = [
+    { version: "2026.12", fecha: "Octubre 2026", titulo: "Nueva app hermana: Lectura Crítica", cambios: [
+      "Enlace a la nueva app hermana Lectura Crítica en la portada y en «Acerca de»: lee críticamente un artículo paso a paso (plantillas de CASPe con preguntas propias, calculadoras y un veredicto con semáforo) antes de cambiar la práctica."] },
     { version: "2026.11", fecha: "Octubre 2026", titulo: "Nueva herramienta de apoyo: Legibilidad", cambios: [
       "En «Acerca de», el grupo «Herramientas de apoyo» suma Legibilidad: mide con el índice de Flesch-Szigriszt y la escala INFLESZ si un texto para pacientes se entiende y te dice qué cambiar."] },
     { version: "2026.10", fecha: "Octubre 2026", titulo: "La copia sin conexión de las otras apps ya no se borra", cambios: [
@@ -837,6 +839,7 @@
         <a class="guide-card guide-card--hermana" href="${L.DAFO_URL}" target="_blank" rel="noopener"><span class="guide-num">D</span><div><div class="guide-q">DAFO · CAME ↗</div><div class="guide-a">La app hermana: <b>analiza tu unidad</b> (debilidades, amenazas, fortalezas y oportunidades) y conviértelo en un plan de acción con indicadores.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.MAPA_URL}" target="_blank" rel="noopener"><span class="guide-num">◆</span><div><div class="guide-q">Mapa de Riesgos ↗</div><div class="guide-a">La app hermana: <b>elabora el mapa de riesgos de un proceso</b>, del flujograma y el AMFE a las acciones de mejora; puede traer tus indicadores para medirlas.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.RONDAS_URL}" target="_blank" rel="noopener"><span class="guide-num">✓</span><div><div class="guide-q">Rondas de Seguridad ↗</div><div class="guide-a">La app hermana: <b>rondas de seguridad</b> en una unidad, con su cumplimiento ronda a ronda y las acciones con su indicador.</div></div><span class="guide-go">›</span></a>
+        <a class="guide-card guide-card--hermana" href="${L.LC_URL}" target="_blank" rel="noopener"><span class="guide-num">LC</span><div><div class="guide-q">Lectura Crítica ↗</div><div class="guide-a">App hermana: <b>lee críticamente un artículo</b> para comprobar si el artículo que justifica un indicador o su estándar es fiable.</div></div><span class="guide-go">›</span></a>
       </div>
       <h2 class="sec-t">Ejemplos resueltos</h2>
       <p class="page-lead">Tócalos para verlos completos, con sus resultados (inventados). Están aparte: <b>no se mezclan con tus indicadores</b>. Si uno te sirve, pulsa «Copiar a mi cuadro».</p>

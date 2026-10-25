@@ -11,8 +11,11 @@
   // ---------- Versión y novedades ----------
   // Al publicar cambios: añadir una entrada AL PRINCIPIO de NOVEDADES, poner su versión en los ?v= de index.html, en
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
-  const APP_VERSION = "2026.08";
+  const APP_VERSION = "2026.09";
   const NOVEDADES = [
+    { version: "2026.09", fecha: "Octubre 2026", titulo: "Herramientas de apoyo y portal de las apps", cambios: [
+      "En «Acerca de», nuevo grupo «Herramientas de apoyo»: el Anonimizador RGPD (seudonimiza o anonimiza una hoja de cálculo sin que los datos salgan de tu navegador) y el Normalizador Bibliográfico (pon tus referencias en Vancouver, APA y otros estilos).",
+      "Y un enlace al portal cjgaland.github.io, la página que reúne todas las apps y explica cómo encajan."] },
     { version: "2026.08", fecha: "Octubre 2026", titulo: "Nueva app hermana: Rondas de Seguridad", cambios: [
       "Acceso directo desde la portada y desde «Acerca de» a Rondas de Seguridad, la nueva app hermana: programa y haz las rondas de seguridad de una unidad, con su cumplimiento ronda a ronda y las acciones con su indicador."] },
     { version: "2026.07", fecha: "Octubre 2026", titulo: "Nueva app hermana: Mapa de Riesgos", cambios: [

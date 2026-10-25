@@ -66,6 +66,7 @@ Estructura (desde 2026-10-21): `Desktop/Calidad&Seguridad/Ecosistema Calidad/Ind
 - Repositorio público `cjgaland/indicadores-calidad`; GitHub Pages desde `main` (raíz): https://cjgaland.github.io/indicadores-calidad/. Creado y publicado con permiso del autor el 2026-10-19 (v2026.01; Pages tarda ~40 s). Cada nueva publicación (push) se hace solo cuando el autor lo pida. v2026.02 (fase 2, resultados por periodo) publicada el 2026-10-19.
 - Pasos para publicar una versión: (1) copia de seguridad; (2) nueva entrada en `NOVEDADES` + `APP_VERSION`; (3) mismos `?v=` en index.html (styles, logic, xlsx, app); (4) subir `CACHE_NAME` en sw.js; (5) `node tests/logic.test.mjs`; (6) commit en español (terminado en `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`) y `git push`.
 - `PROMPT_NUEVA_SESION.md` no se publica (está en `.gitignore`).
+- **v2026.09 (2026-10-25, sin publicar)**: en «Acerca de», grupo «Herramientas de apoyo» (Anonimizador RGPD https://cjgaland.github.io/anonimizador-rgpd-web/ y Normalizador Bibliográfico https://cjgaland.github.io/normalizador-bibliografico/, con su propia imagen y sin intercambio de datos) y enlace al portal del ecosistema (https://cjgaland.github.io/, carpeta `Ecosistema Calidad/Portal/`).
 
 ## 8. Pendiente
 - Probar en un iPhone real el PDF y la copia de seguridad por Compartir, y la instalación como PWA.

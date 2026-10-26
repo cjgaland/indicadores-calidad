@@ -642,3 +642,14 @@ body.ver-informe .print-foot .autor-titulo, body.ver-informe .print-foot .autor,
 .banner-acc { display: flex; gap: 14px; font-weight: 700; }
 .banner-acc a { text-decoration: underline; }
 :root[data-tema="oscuro"] .banner-ejemplo { background: rgba(167,139,250,.14); }
+
+/* «Traer de Lectura Crítica»: lista de lecturas en la ventana de confirmar (mismo bloque en AMFE, DAFO, Auditorías e Indicadores) */
+.lc-lista { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; margin-top: 10px; }
+.lc-op { display: flex; gap: 10px; align-items: flex-start; padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-2); cursor: pointer; }
+.lc-op:has(input:checked) { border-color: var(--cyan); background: var(--cyan-dim); }
+.lc-op input { margin-top: 3px; flex: none; accent-color: var(--cyan); }
+.lc-op span { min-width: 0; }
+.lc-op b { display: block; font-size: 14px; line-height: 1.3; color: var(--text-1); overflow-wrap: anywhere; }
+.lc-op small { display: block; font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
+.lc-dec { font-weight: 700; }
+.lc-dec--aplicar { color: var(--green); } .lc-dec--esperar { color: var(--amber); } .lc-dec--descartar { color: var(--red); }

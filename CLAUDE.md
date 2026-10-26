@@ -69,6 +69,7 @@ Estructura (desde 2026-10-21): `Desktop/Calidad&Seguridad/Ecosistema Calidad/Ind
 - **v2026.09 (2026-10-25, publicada el 2026-10-25)**: en «Acerca de», grupo «Herramientas de apoyo» (Anonimizador RGPD https://cjgaland.github.io/anonimizador-rgpd-web/ y Normalizador Bibliográfico https://cjgaland.github.io/normalizador-bibliografico/, con su propia imagen y sin intercambio de datos) y enlace al portal del ecosistema (https://cjgaland.github.io/, carpeta `Ecosistema Calidad/Portal/`).
 - **v2026.11 (2026-10-25, publicada el 2026-10-25)**: Legibilidad (https://cjgaland.github.io/legibilidad/) se suma al grupo «Herramientas de apoyo» de «Acerca de».
 - **v2026.12 (2026-10-26)**: enlace a la nueva app hermana Lectura Crítica (`/Users/Trabajo/Desktop/Calidad&Seguridad/Ecosistema Calidad/LecturaCritica/Aplicación/`, https://cjgaland.github.io/lectura-critica/) en la portada y en «Acerca de».
+- **v2026.13 (2026-10-26)**: «Traer de Lectura Crítica» junto al criterio (paso 1): `L.aplicarLectura` escribe el criterio desde la PICO (`L.criterioDeLectura`, solo si está vacío) y añade la evidencia (`L.textoEvidenciaLC`) a «Observaciones» sin repetirla. Lee el paquete `lecturacritica-lecturas` v1 con `L.lecturasDe` (o la copia .json, `#input-lc`); `traerLC`/`elegirLC` en app.js, mismo código en AMFE, DAFO y Auditorías. Pruebas: `node tests/lectura-critica.test.mjs` y el bloque «Lectura Crítica» de logic.test.
 
 ## 8. Pendiente
 - Probar en un iPhone real el PDF y la copia de seguridad por Compartir, y la instalación como PWA.

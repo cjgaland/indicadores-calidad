@@ -196,5 +196,18 @@ t("Excel: semáforo coloreado", hR.filas[3][7].estilo === "rojo" && hR.filas[5][
 const bR = X.construirLibroXlsx(libroR);
 t("Excel con resultados: ZIP válido", bR[0] === 0x50 && bR[1] === 0x4b);
 
+// «Traer de Lectura Crítica»: criterio desde la PICO (solo si está vacío) y evidencia en «Observaciones»
+{
+  const x = L.lecturasDe({ formato: "lecturacritica-lecturas", version: 1, lecturas: [{ id: "l1", titulo: "Valoración precoz del riesgo de úlceras", cita: "Autor C, et al. Int J Nurs Stud. 2022;130:104-12.", tipoNombre: "Estudio de cohortes", decision: "aplicar", pico: { p: "Pacientes ingresados", i: "valoración del riesgo de UPP en las primeras 24 horas", c: "", o: "" }, resultadosClave: [], mensaje: "" }] }).lecturas[0];
+  const ind = L.nuevoIndicador("lc1", "");
+  t("Lectura Crítica: escribe el criterio si está vacío", L.aplicarLectura(ind, x).criterio && ind.criterio === "En pacientes ingresados, se aplica: valoración del riesgo de UPP en las primeras 24 horas");
+  t("Lectura Crítica: evidencia en observaciones", ind.observaciones === "Evidencia: Autor C, et al. Int J Nurs Stud. 2022;130:104-12 (estudio de cohortes). Decisión tras la lectura crítica: aplicar.");
+  const ind2 = Object.assign(L.nuevoIndicador("lc2", ""), { criterio: "Mi criterio", observaciones: "Nota previa" });
+  t("Lectura Crítica: no toca un criterio escrito", !L.aplicarLectura(ind2, x).criterio && ind2.criterio === "Mi criterio" && ind2.observaciones.startsWith("Nota previa\nEvidencia:"));
+  L.aplicarLectura(ind2, x);
+  t("Lectura Crítica: no repite la evidencia", ind2.observaciones.split("Evidencia:").length === 2);
+  t("Lectura Crítica: pasa el saneado", L.sanearIndicador(ind, "x", "").criterio === ind.criterio);
+}
+
 console.log(`${ok} correctos, ${mal} fallidos`);
 if (mal) process.exit(1);

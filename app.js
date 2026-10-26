@@ -13,6 +13,7 @@
   // APP_VERSION y subir CACHE_NAME en sw.js. Formato de versión: AAAA.NN.
   const APP_VERSION = "2026.13";
   const NOVEDADES = [
+    // [eco]
     { version: "2026.13", fecha: "Octubre 2026", titulo: "Traer de Lectura Crítica", cambios: [
       "En el paso 1, «Traer de Lectura Crítica» escribe el criterio a partir de la pregunta PICO de un artículo que hayas leído con esa app (si aún no tienes criterio) y guarda su evidencia en «Observaciones». Avisa si la decisión fue esperar o descartar."] },
     { version: "2026.12", fecha: "Octubre 2026", titulo: "Nueva app hermana: Lectura Crítica", cambios: [
@@ -34,9 +35,19 @@
       "Acceso directo desde la portada y desde «Acerca de» a AMFE (Análisis Modal de Fallos y Efectos), la app hermana para analizar los fallos de un proceso, puntuar G·O·D e IPR y priorizar. Con su botón «Traer de Indicadores» usa los indicadores que tengas aquí para medir sus acciones de mejora."] },
     { version: "2026.04", fecha: "Octubre 2026", titulo: "Nueva app hermana: Auditorías", cambios: [
       "Acceso directo desde la portada y desde «Acerca de» a Auditorías, la app hermana para planificar, realizar, informar y hacer el seguimiento de una auditoría completa: Mapa de Riesgos, Plan Anual, diseño con indicadores y muestra, recogida de datos, informe y plan de mejora."] },
+    // [/eco]
+    /* [ind]
+    { version: "2026.13", fecha: "Octubre 2026", titulo: "Evidencia de Lectura Crítica", cambios: [
+      "En el paso 1, «Cargar archivo de Lectura Crítica» escribe el criterio a partir de la pregunta PICO de un artículo leído con la app Lectura Crítica (desde su copia de seguridad .json), si aún no tienes criterio, y guarda su evidencia en «Observaciones». Avisa si la decisión fue esperar o descartar."] },
+    [/ind] */
     { version: "2026.03", fecha: "Octubre 2026", titulo: "Una app para todos", cambios: [
       "La app es ahora de uso general: se han quitado las referencias directas al curso de auditorías (que sigue citado entre las fuentes, en «Acerca de»).",
+      // [eco]
       "La portada se titula «Indicadores» y tiene un acceso directo a la app hermana Tamaño Muestral.",
+      // [/eco]
+      /* [ind]
+      "La portada se titula «Indicadores» y tiene un acceso directo a la calculadora Tamaño Muestral.",
+      [/ind] */
       "El Excel exportado nombra sus hojas «Caracterización», «Definición operativa», «Compuestos» y «Resultados».",
       "Nuevo «Cuadro de ejemplo» (menú «Ejemplos»), aparte de tus indicadores: 9 indicadores y un compuesto con resultados inventados para ver semáforos, gráficos y tendencia. No se guarda ni se mezcla con lo tuyo; «Copiar a mi cuadro» trae el que te sirva.",
       "Si tu cuadro tenía copias de los ejemplos de versiones anteriores, un aviso te permite quitarlas.",
@@ -834,7 +845,13 @@
         <a class="guide-card" href="#/aprende"><span class="guide-num">?</span><div><div class="guide-q">Aprende</div><div class="guide-a">Tipos, formas de cálculo, SMART, compuestos y su relación con el <b>PDCA</b>.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card" href="#/prueba"><span class="guide-num">✓</span><div><div class="guide-q">Ponte a prueba</div><div class="guide-a">Doce preguntas para comprobar si lo tienes claro.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card" href="#/glosario"><span class="guide-num">A–Z</span><div><div class="guide-q">Glosario</div><div class="guide-a">Cada término <b>en lenguaje llano</b>, con buscador.</div></div><span class="guide-go">›</span></a>
+        <!-- [eco] -->
         <a class="guide-card guide-card--hermana" href="${L.TM_URL}" target="_blank" rel="noopener"><span class="guide-num">n</span><div><div class="guide-q">Tamaño Muestral ↗</div><div class="guide-a">La app hermana: <b>cuántos casos revisar</b>, plan LQAS y concordancia entre auditoras.</div></div><span class="guide-go">›</span></a>
+        <!-- [/eco] -->
+        <!-- [ind]
+        <a class="guide-card guide-card--hermana" href="${L.TM_URL}" target="_blank" rel="noopener"><span class="guide-num">n</span><div><div class="guide-q">Tamaño Muestral ↗</div><div class="guide-a">Calculadora incluida: <b>cuántos casos revisar</b>, plan LQAS y concordancia entre auditoras.</div></div><span class="guide-go">›</span></a>
+        [/ind] -->
+        <!-- [eco] -->
         <a class="guide-card guide-card--hermana" href="${L.AUD_URL}" target="_blank" rel="noopener"><span class="guide-num">↻</span><div><div class="guide-q">Auditorías ↗</div><div class="guide-a">La app hermana: <b>planifica, realiza e informa una auditoría completa</b>, del Mapa de Riesgos al plan de mejora y el seguimiento.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.AMFE_URL}" target="_blank" rel="noopener"><span class="guide-num">IPR</span><div><div class="guide-q">AMFE ↗</div><div class="guide-a">La app hermana: <b>analiza los fallos de un proceso</b> con G·O·D e IPR y elige cuáles medir; desde ella puedes traer tus indicadores a sus acciones de mejora.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.FLUJO_URL}" target="_blank" rel="noopener"><span class="guide-num">→</span><div><div class="guide-q">Flujograma ↗</div><div class="guide-a">La app hermana: <b>dibuja el flujograma de un proceso</b> y marca sus puntos críticos, donde conviene poner un indicador.</div></div><span class="guide-go">›</span></a>
@@ -842,6 +859,7 @@
         <a class="guide-card guide-card--hermana" href="${L.MAPA_URL}" target="_blank" rel="noopener"><span class="guide-num">◆</span><div><div class="guide-q">Mapa de Riesgos ↗</div><div class="guide-a">La app hermana: <b>elabora el mapa de riesgos de un proceso</b>, del flujograma y el AMFE a las acciones de mejora; puede traer tus indicadores para medirlas.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.RONDAS_URL}" target="_blank" rel="noopener"><span class="guide-num">✓</span><div><div class="guide-q">Rondas de Seguridad ↗</div><div class="guide-a">La app hermana: <b>rondas de seguridad</b> en una unidad, con su cumplimiento ronda a ronda y las acciones con su indicador.</div></div><span class="guide-go">›</span></a>
         <a class="guide-card guide-card--hermana" href="${L.LC_URL}" target="_blank" rel="noopener"><span class="guide-num">LC</span><div><div class="guide-q">Lectura Crítica ↗</div><div class="guide-a">App hermana: <b>lee críticamente un artículo</b> para comprobar si el artículo que justifica un indicador o su estándar es fiable.</div></div><span class="guide-go">›</span></a>
+        <!-- [/eco] -->
       </div>
       <h2 class="sec-t">Ejemplos resueltos</h2>
       <p class="page-lead">Tócalos para verlos completos, con sus resultados (inventados). Están aparte: <b>no se mezclan con tus indicadores</b>. Si uno te sirve, pulsa «Copiar a mi cuadro».</p>
@@ -1600,12 +1618,18 @@
   let lcCargadas = null, lcPendiente = null;
   function traerLC(titulo, alElegir) {
     lcPendiente = { titulo, alElegir };
+    // [eco]
     let r = null; try { r = L.lecturasDe(JSON.parse(leer("lecturacritica-intercambio") || "null")); } catch (e) { /* */ }
     const lista = lcCargadas || (r && r.lecturas && r.lecturas.length ? r.lecturas : null);
     if (lista) { elegirLC(lista); return; }
     confirmar(r && r.error === "version" ? "<p>Las lecturas de este navegador son de una versión de <b>Lectura Crítica</b> que esta app aún no sabe leer.</p>"
       : "<p>No hay lecturas de la app <b>Lectura Crítica</b> en este navegador.</p><p>Si las tienes en otro dispositivo, carga su copia de seguridad (.json).</p>",
       "Cargar una copia", () => $("#input-lc").click(), { titulo, peligro: false });
+    // [/eco]
+    /* [ind]
+    if (lcCargadas) { elegirLC(lcCargadas); return; }
+    $("#input-lc").click();
+    [/ind] */
   }
   function elegirLC(lista) {
     const { titulo, alElegir } = lcPendiente, cortar = (s, n) => s.length > n ? s.slice(0, n - 1) + "…" : s;

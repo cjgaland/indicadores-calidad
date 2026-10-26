@@ -8,7 +8,14 @@
 (function (raiz) {
   "use strict";
 
+  // [eco]
   const TM_URL = "https://cjgaland.github.io/tamano-muestral/";
+  // [/eco]
+  // En la edición independiente, Tamaño Muestral va dentro, en su subcarpeta
+  /* [ind]
+  const TM_URL = "tamano-muestral/";
+  [/ind] */
+  // [eco]
   const AUD_URL = "https://cjgaland.github.io/auditorias/";
   const AMFE_URL = "https://cjgaland.github.io/amfe/";
   const FLUJO_URL = "https://cjgaland.github.io/flujograma/";
@@ -16,6 +23,7 @@
   const MAPA_URL = "https://cjgaland.github.io/mapa-riesgos/";
   const RONDAS_URL = "https://cjgaland.github.io/rondas-seguridad/";
   const LC_URL = "https://cjgaland.github.io/lectura-critica/";
+  // [/eco]
   const VERSION_DATOS = 1;
 
   // ---------- Catálogos ----------
@@ -649,7 +657,11 @@
 
   const API = {
     FORMATO_LC, VERSION_LC, DECISION_LC, lecturasDe, referenciaLC, textoEvidenciaLC,
-    TM_URL, AUD_URL, AMFE_URL, FLUJO_URL, DAFO_URL, MAPA_URL, RONDAS_URL, LC_URL, VERSION_DATOS, TIPOS, CALCULOS, CALIDAD, PERIODICIDADES, FUENTES,
+    TM_URL,
+    // [eco]
+    AUD_URL, AMFE_URL, FLUJO_URL, DAFO_URL, MAPA_URL, RONDAS_URL, LC_URL,
+    // [/eco]
+    VERSION_DATOS, TIPOS, CALCULOS, CALIDAD, PERIODICIDADES, FUENTES,
     num, lleno, nfmt, sinTildes, nuevoIndicador, nuevoCompuesto, ipr, sugerirNombre, sentidoSugerido,
     unidadPorDefecto, unidad, formula, usaDenominador, textoEstandar, avisos, pistasCalidad, estadoCalidad, acuerdoPiloto,
     pasosCompletos, recomendacionMuestra, lqasParams, enlaceTM, enlacesTM, calcCompuesto, fraseCompuesto, pct1,

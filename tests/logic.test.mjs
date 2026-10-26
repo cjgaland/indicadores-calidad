@@ -64,7 +64,12 @@ t("acuerdo piloto incompleto", L.acuerdoPiloto({ a: "20", b: "", c: "3", d: "5" 
 const lq = Object.assign(L.nuevoIndicador("l1", ""), { calculo: "porcentaje", sentido: "mas", estandar: "85", umbral: "60" });
 const urlL = L.enlacesTM(lq).lqas;
 const dL = JSON.parse(decodeURIComponent(urlL.split("?d=")[1]));
+// [eco]
 t("LQAS URL base", urlL.startsWith("https://cjgaland.github.io/tamano-muestral/#/lqas?d="));
+// [/eco]
+/* [ind]
+t("LQAS URL base (Tamaño Muestral incluido)", urlL.startsWith("tamano-muestral/#/lqas?d="));
+[/ind] */
 t("LQAS pU/pL como texto en %", dL.pU === "85" && dL.pL === "60" && dL.alpha === "5" && dL.beta === "20");
 t("LQAS sin N vacío", !("N" in dL));
 const lqi = Object.assign(L.nuevoIndicador("l2", ""), { calculo: "porcentaje", sentido: "menos", estandar: "5", umbral: "20" });

@@ -618,6 +618,53 @@
     return (m ? m + (partes.length ? ": " : "") : "") + partes.join(" · ");
   }
 
+  // ---------- «Traer de ACR · Ishikawa» (paquete «acrishikawa-analisis» v1) ----------
+  // Lee el paquete que ACR · Ishikawa deja en el navegador o su copia .json (clave «intercambio»).
+  // Mismo código en Auditorías e Indicadores. Solo las acciones con texto; se copia: no hay vínculo vivo.
+  const FORMATO_ACR = "acrishikawa-analisis", VERSION_ACR = 1;
+  const FUERZAS_ACR = { fuerte: "fuerte", intermedia: "intermedia", debil: "débil" };
+  const TIPOS_MEDIDA_ACR = { existe: "está implantada", sehace: "se hace", funciona: "funciona" };
+  function analisisDeAcr(o) {
+    if (o && typeof o === "object" && !o.formato && o.intercambio && typeof o.intercambio === "object") o = o.intercambio;
+    if (!o || typeof o !== "object" || o.formato !== FORMATO_ACR || !Array.isArray(o.analisis)) return { error: "formato" };
+    if (o.version !== VERSION_ACR) return { error: "version" };
+    const t = (v, n) => typeof v === "string" ? v.trim().slice(0, n) : typeof v === "number" && isFinite(v) ? String(v) : "";
+    const analisis = o.analisis.slice(0, 300).filter(a => a && typeof a === "object" && typeof a.id === "string" && !/^ej-/.test(a.id)).map(a => ({
+      id: t(a.id, 80), tipo: a.tipo === "acr" ? "acr" : "ishikawa", titulo: t(a.titulo, 300), unidad: t(a.unidad, 200), problema: t(a.problema, 600),
+      sac: Number.isInteger(a.sac) && a.sac >= 1 && a.sac <= 4 ? a.sac : null, cerrado: a.cerrado === true,
+      acciones: (Array.isArray(a.acciones) ? a.acciones : []).filter(x => x && typeof x === "object" && t(x.que, 1500)).slice(0, 60).map(x => {
+        const i = x.indicador && typeof x.indicador === "object" && t(x.indicador.nombre, 500) ? x.indicador : null;
+        return { id: t(x.id, 80), que: t(x.que, 1500), fuerza: FUERZAS_ACR[x.fuerza] ? x.fuerza : "", categoria: t(x.categoria, 200), responsable: t(x.responsable, 300), plazo: t(x.plazo, 20),
+          causas: (Array.isArray(x.causas) ? x.causas : []).map(c => t(c, 500)).filter(Boolean).slice(0, 20),
+          indicador: i ? { nombre: t(i.nombre, 500), numerador: t(i.numerador, 500), denominador: t(i.denominador, 500), esperado: t(i.esperado, 60), fecha: t(i.fecha, 20), tipo: TIPOS_MEDIDA_ACR[i.tipo] ? i.tipo : "" } : null };
+      })
+    })).filter(a => a.acciones.length);
+    return { analisis, generado: t(o.generado, 40) };
+  }
+  // «≥ 90 %» → { sentido: "mas", estandar: "90" }; «≤ 2 %» → menos; sin número → estándar vacío
+  function estandarDeEsperado(s) {
+    const t = String(s || ""), m = /(\d+(?:[.,]\d+)?)/.exec(t);
+    return { sentido: /≤|<|menos|como máximo|como maximo/i.test(t) ? "menos" : "mas", estandar: m ? m[1] : "" };
+  }
+  const nombreAnalisisAcr = a => a.titulo || a.problema || "Análisis sin título";
+  // «Acción fuerte que ataca: …; responsable: …; plazo: …»
+  function textoAccionAcr(x) {
+    return [`Acción${x.fuerza ? " " + FUERZAS_ACR[x.fuerza] : ""}${x.categoria ? ` (${x.categoria.charAt(0).toLowerCase() + x.categoria.slice(1)})` : ""}`,
+      x.causas.length ? "ataca: " + x.causas.join("; ") : "", x.responsable ? "responsable: " + x.responsable : "",
+      /^\d{4}-\d{2}-\d{2}$/.test(x.plazo) ? "plazo: " + x.plazo.split("-").reverse().join("/") : ""].filter(Boolean).join("; ") + ".";
+  }
+
+  // Una acción con indicador → indicador nuevo: la acción es el criterio; numerador, denominador y estándar, los suyos
+  function indicadorDesdeAccion(an, x, id, fecha) {
+    const i = x.indicador || { nombre: "", numerador: "", denominador: "", esperado: "", tipo: "" }, e = estandarDeEsperado(i.esperado);
+    return Object.assign(nuevoIndicador(id, fecha), {
+      nombre: i.nombre, criterio: x.que.slice(0, 1000), hallazgo: (`${an.tipo === "acr" ? "Análisis causa raíz" : "Diagrama de Ishikawa"} «${nombreAnalisisAcr(an)}». ${textoAccionAcr(x)}`).slice(0, 1000),
+      calculo: lleno(i.denominador) ? "porcentaje" : "",
+      numerador: i.numerador, denominador: i.denominador, sentido: e.sentido, estandar: e.estandar, responsable: x.responsable,
+      observaciones: `Viene de la app ACR · Ishikawa${i.fecha ? `; primera medida prevista: ${i.fecha.split("-").reverse().join("/")}` : ""}. Es una copia: si el análisis cambia, vuelve a traerlo.`
+    });
+  }
+
   // ---------- «Traer de Lectura Crítica» (paquete «lecturacritica-lecturas» v1) ----------
   // Lee localStorage["lecturacritica-intercambio"] o la copia .json de Lectura Crítica (clave «intercambio»).
   // Mismo código en AMFE, DAFO, Auditorías e Indicadores. Se copia como texto: no hay vínculo vivo.
@@ -657,6 +704,7 @@
   }
 
   const API = {
+    FORMATO_ACR, VERSION_ACR, analisisDeAcr, estandarDeEsperado, nombreAnalisisAcr, textoAccionAcr, indicadorDesdeAccion,
     FORMATO_LC, VERSION_LC, DECISION_LC, lecturasDe, referenciaLC, textoEvidenciaLC,
     TM_URL,
     // [eco]
